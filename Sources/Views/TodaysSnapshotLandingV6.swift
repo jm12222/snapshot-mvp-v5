@@ -1757,7 +1757,10 @@ struct SnapshotUnitDetailV6: View {
             (body: "Forecasters are calling for 18 to 24 inches of new snow above 9,000 feet between Friday night and Sunday morning.", linkText: "Forecasters"),
             (body: "Heaviest accumulation is expected along the I-70 corridor, with several previously-closed lifts reopening in time for the weekend.", linkText: nil),
             (body: "Mountain towns have issued winter parking advisories; chains may be required on Loveland and Vail Pass after midnight Friday.", linkText: "Loveland and Vail Pass"),
-            (body: "Lift tickets are tracking 12% cheaper than the same weekend last year, and lodging availability is unusually strong for late-season powder.", linkText: "12% cheaper")
+            // Cap of 3 inline links per sub-page for the demo — this bullet
+            // intentionally has no link to keep the count at 3 (thesis +
+            // bullet 0 + bullet 2).
+            (body: "Lift tickets are tracking 12% cheaper than the same weekend last year, and lodging availability is unusually strong for late-season powder.", linkText: nil)
         ]
     }
 
