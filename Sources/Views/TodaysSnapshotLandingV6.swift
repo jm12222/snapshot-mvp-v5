@@ -1849,7 +1849,7 @@ struct SnapshotUnitDetailV6: View {
                         Spacer()
                     }
                     .padding(.horizontal, 12)
-                    .padding(.bottom, 24) // tuned: 20 → 24 (+4pt before media grid)
+                    .padding(.bottom, 20) // tuned: 24 → 20 (-4pt before media grid)
                     .v6EntranceAnimation(visible: entranceVisible, delay: 0.12)
 
                     // 2×2 media grid
