@@ -54,12 +54,13 @@ struct TodaysSnapshotLandingV6: View {
 
     private var v6Units: [V6SnapshotUnit] {
         [
-            V6SnapshotUnit(id: 0, title: "Snow finally comes to Colorado",                              body: "There's snow coming to Colorado! Here's a rundown of which ski resorts you should hit this weekend. Best prices and smallest crowds.",                                                 image1: "ski-colorado",      image2: "snow-colorado",     image3: "blizzard",           image4: "ski-colorado",      usernames: ["Colorado Ski Authority", "Mountain Report", "Powder Alert", "Resort Guide"]),
+            V6SnapshotUnit(id: 0, title: "Snow finally comes to Colorado",                              body: "There's snow coming to Colorado! Here's a rundown of which ski resorts you should hit this weekend. Best prices and smallest crowds.",                                                 image1: "snow-colorado",     image2: "unsplash-skier-blue", image3: "unsplash-skier-jump", image4: "unsplash-snow-lake", usernames: ["Colorado Ski Authority", "Mountain Report", "Powder Alert", "Resort Guide"]),
             V6SnapshotUnit(id: 1, title: "Nothing Technologies unveils new headphones", body: "New earphone and camera are launched by Nothing Technologies that you are interested in.",                                                                                    image1: "headphones",        image2: "nothing-headphones", image3: "headphones",         image4: "nothing-headphones", usernames: ["The Verge", "Tech Insider", "Wired", "Engadget"]),
             V6SnapshotUnit(id: 2, title: "Brooklyn's liminal night photography spots this April",       body: "Brooklyn is known for its vibrant nightlife and unique photo opportunities. The best options are always hidden.",                                                                   image1: "brooklyn-photo",    image2: "la-cinema",          image3: "brooklyn-photo",    image4: "la-cinema",          usernames: ["Brooklyn Magazine", "NYC Photo", "Street Lens", "Urban Frame"]),
-            V6SnapshotUnit(id: 3, title: "Upcoming birthdays",                                          body: "Frederic, Anna and Shelly are having their birthday this week.",                                                                                                                    image1: "birthday",          image2: "children-museum-winter", image3: "pantone-color-year", image4: "birthday",         usernames: ["Frederic", "Anna", "Shelly", "Friends"]),
-            V6SnapshotUnit(id: 4, title: "Syracuse plays Saint Joseph's on March 18",                  body: "Brandon Marcus, Amelia Santos and 20 others are celebrating their birthdays. Plan for their special day!",                                                                         image1: "syracuse",          image2: "lakers-basketball",  image3: "syracuse",          image4: "lakers-basketball",  usernames: ["Syracuse Athletics", "CBS Sports", "ESPN", "March Madness"]),
+            V6SnapshotUnit(id: 3, title: "Upcoming birthdays",                                          body: "Frederic, Anna and Shelly have birthdays this week. Sabrina announced her graduation.",                                                                                                                    image1: "birthday",          image2: "children-museum-winter", image3: "pantone-color-year", image4: "birthday",         usernames: ["Frederic", "Anna", "Shelly", "Friends"]),
+            V6SnapshotUnit(id: 4, title: "Syracuse plays Saint Joseph's on March 18",                  body: "Tip-off is 7pm ET at the JMA Wireless Dome. The Orange enter riding a four-game win streak and are favored by 6.5 against the Hawks.",                                            image1: "syracuse",          image2: "lakers-basketball",  image3: "syracuse",          image4: "lakers-basketball",  usernames: ["Syracuse Athletics", "CBS Sports", "ESPN", "March Madness"]),
             V6SnapshotUnit(id: 5, title: "Cassette player revival",                                    body: "Modern cassette players like the FiiO CP26 are sparking a retro tech revival among analog audio collectors.",                                                                      image1: "casette-fiio",      image2: "casette-fiio",       image3: "casette-fiio",      image4: "casette-fiio",       usernames: ["Analog Audio", "Retro Tech", "FiiO Official", "Sound Collector"]),
+            V6SnapshotUnit(id: 6, title: "Lakers edge Warriors in OT thriller",                          body: "LeBron's late three forced overtime and Reaves sealed it with a fadeaway. LA pulls within a half-game of the Pacific Division lead.",                                              image1: "lakers-basketball", image2: "lakers-basketball",  image3: "lakers-basketball", image4: "lakers-basketball",  usernames: ["Lakers Nation", "ESPN", "Bleacher Report", "The Athletic"]),
         ]
     }
     
@@ -198,7 +199,7 @@ struct TodaysSnapshotLandingV6: View {
                         }
                     }
                 },
-                backgroundColor: Color("cardBackground")
+                backgroundColor: Color("bottomSheetBackgroundDeemphasized")
             )
             .simultaneousGesture(
                 LongPressGesture(minimumDuration: 0.6)
@@ -233,7 +234,7 @@ struct TodaysSnapshotLandingV6: View {
                 }
             }
         }
-        .background(Color("cardBackground").ignoresSafeArea())
+        .background(Color("bottomSheetBackgroundDeemphasized").ignoresSafeArea())
     }
     
     // MARK: - Snapshot Units Container
@@ -288,7 +289,7 @@ struct TodaysSnapshotLandingV6: View {
         snapshotUnit(
             unitId: 4,
             title: "Upcoming birthdays from your Facebook friends",
-            bodyText: "Frederic, Anna and Shelly are having their birthday this week.",
+            bodyText: "Frederic, Anna and Shelly have birthdays this week. Sabrina announced her graduation.",
             image1: "birthday",
             image2: "children-museum-winter",
             image3: "pantone-color-year",
@@ -465,18 +466,22 @@ struct TodaysSnapshotLandingV6: View {
     // MARK: - Hero Media Card
 
     private var heroMediaCard: some View {
-        mediaCard(
-            imageName: "ski-colorado",
-            title: "Snow finally comes to Colorado",
-            body: "There's snow coming to Colorado! Here's a rundown of which ski resorts you should hit this weekend. Best prices and smallest crowds."
-        )
+        Button(action: {
+            selectedUnit = v6Units[0]
+        }) {
+            mediaCard(
+                imageName: "ski-colorado",
+                title: "Snow finally comes to Colorado",
+                body: "There's snow coming to Colorado! Here's a rundown of which ski resorts you should hit this weekend. Best prices and smallest crowds."
+            )
+        }
+        .buttonStyle(FDSPressedState(cornerRadius: 12)) // tuned: 8 → 12 (match thumbs + section container)
     }
 
     private func mediaCard(imageName: String, title: String, body: String) -> some View {
-        // Regular-material strip treatment: title + body sit in a light material
-        // panel that overlays the bottom of the image. Image is sized taller
-        // and biased upward so the subject (skier) reads cleanly above the
-        // strip instead of being awkwardly sliced by it.
+        // Pure-white text panel overlays the bottom of the image. The whole
+        // card (image + panel) gets a subtle media-inner-border hairline so it
+        // reads as a single unit against the page's faint grey background.
         ZStack(alignment: .bottom) {
             GeometryReader { geo in
                 Image(imageName)
@@ -488,23 +493,23 @@ struct TodaysSnapshotLandingV6: View {
 
             VStack(alignment: .leading, spacing: 8) {
                 Text(title)
-                    .headline3EmphasizedTypography()
+                    .headline3Typography() // tuned: emphasized → regular
                     .foregroundStyle(Color("primaryText"))
-                Text(body)
-                    .body3Typography()
-                    .foregroundStyle(Color("secondaryText"))
-                    .lineLimit(2)
+                WordTruncatedBody(text: body, foregroundColor: Color("secondaryText"))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 12)
-            .padding(.top, 20) // +8 above headline per request
-            .padding(.bottom, 12)
-            .background(.regularMaterial)
+            .padding(.top, 16) // tuned: 24 → 16 (-8 above headline)
+            .padding(.bottom, 20) // tuned: 24 → 20 (-4 below body)
+            .background(Color("cardBackground"))
         }
-        .frame(height: 300)
-        .clipShape(RoundedRectangle(cornerRadius: 8))
+        // Card height shrunk 300 → 258 (~20% less visible image area, text panel
+        // unchanged). At 350-ish pt wide, scaledToFill keeps the full image
+        // vertical visible and recrops by reducing horizontal side-cropping.
+        .frame(height: 258)
+        .clipShape(RoundedRectangle(cornerRadius: 12)) // tuned: 8 → 12 (match thumbs + section container)
         .overlay(
-            RoundedRectangle(cornerRadius: 8)
+            RoundedRectangle(cornerRadius: 12) // tuned: 8 → 12 (match thumbs + section container)
                 .stroke(Color("mediaInnerBorder"), lineWidth: 0.5)
         )
     }
@@ -521,16 +526,9 @@ struct TodaysSnapshotLandingV6: View {
                     .foregroundStyle(Color("primaryText"))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.top, 4)
-                
-                // 12px gap between title and meta
-                Spacer().frame(height: 12)
-                
-                // Metadata
-                Text("6 things to start your day")
-                    .meta2Typography()
-                    .foregroundStyle(Color("secondaryText"))
-                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 4)
+
+                // Subtitle "6 things to start your day" intentionally hidden per request.
             }
             .padding(.horizontal, 12)
             .padding(.top, 12)  // Outer top padding
@@ -543,7 +541,7 @@ struct TodaysSnapshotLandingV6: View {
             // weatherChipPostMVP
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color("cardBackground"))
+        .background(Color("bottomSheetBackgroundDeemphasized"))
     }
     
     // MARK: - Weather Chip (MVP)
@@ -597,17 +595,22 @@ struct TodaysSnapshotLandingV6: View {
     }
 
     private var v6SportsYouFollowUnits: [V6SnapshotUnit] {
-        // Sports + local-interest stories. Cassette appended last per request
-        // ("move the cassette player revival module to bottom of list").
-        [v6Units[4], v6Units[2], v6Units[5]]
+        // Sports stories only — local items moved to dedicated LOCAL section.
+        // Lakers (id 6) appended below Syracuse per request.
+        [v6Units[4], v6Units[6]]
+    }
+
+    private var v6LocalUnits: [V6SnapshotUnit] {
+        // LOCAL section per request: last 2 items go here (Brooklyn + Cassette).
+        [v6Units[2], v6Units[5]]
     }
 
     private func highlightsSection(proxy: ScrollViewProxy) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             sectionHeader("Picked for you")
                 .padding(.horizontal, 16)
-                .padding(.top, 16)
-                .padding(.bottom, 8)
+                .padding(.top, 4) // header bottom (16) + date bottom (4) + this (4) = 24px below the date
+                .padding(.bottom, 12) // tuned: 8 → 12 (+4 below meta2 header)
 
             heroMediaCard
                 .padding(.horizontal, 12)
@@ -615,26 +618,34 @@ struct TodaysSnapshotLandingV6: View {
 
             groupedHighlights(units: v6PickedForYouUnits)
                 .padding(.horizontal, 12)
-                .padding(.bottom, 24)
+                .padding(.bottom, 16) // 12 + 4 above next section header
 
             sectionHeader("Friends")
                 .padding(.horizontal, 16)
-                .padding(.bottom, 8)
+                .padding(.bottom, 12) // tuned: 8 → 12 (+4 below meta2 header)
 
             groupedHighlights(units: v6FriendsUnits)
                 .padding(.horizontal, 12)
-                .padding(.bottom, 24)
+                .padding(.bottom, 16) // 12 + 4 above next section header
 
             sectionHeader("Sports you follow")
                 .padding(.horizontal, 16)
-                .padding(.bottom, 8)
+                .padding(.bottom, 12) // tuned: 8 → 12 (+4 below meta2 header)
 
             groupedHighlights(units: v6SportsYouFollowUnits)
+                .padding(.horizontal, 12)
+                .padding(.bottom, 16) // 12 + 4 above next section header
+
+            sectionHeader("Local")
+                .padding(.horizontal, 16)
+                .padding(.bottom, 12) // tuned: 8 → 12 (+4 below meta2 header)
+
+            groupedHighlights(units: v6LocalUnits)
                 .padding(.horizontal, 12)
                 .padding(.bottom, 8)
         }
         .padding(.bottom, 140)
-        .background(Color("cardBackground"))
+        .background(Color("bottomSheetBackgroundDeemphasized"))
     }
 
     private func sectionHeader(_ title: String) -> some View {
@@ -1335,22 +1346,19 @@ struct TodaysSnapshotLandingV6: View {
                         .resizable()
                         .scaledToFill()
                         .frame(width: 64, height: 64)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .clipShape(RoundedRectangle(cornerRadius: 12)) // tuned: 8 → 12 (match hero + section container)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: 12) // tuned: 8 → 12 (match hero + section container)
                                 .stroke(Color("mediaInnerBorder"), lineWidth: 0.5)
                         )
 
-                    VStack(alignment: .leading, spacing: 14) {
+                    VStack(alignment: .leading, spacing: 10) { // tuned: 14 → 10 (-4 below headline)
                         Text(unit.title)
-                            .headline3EmphasizedTypography()
+                            .headline3Typography() // tuned: emphasized → regular
                             .foregroundColor(Color("primaryText"))
                             .frame(maxWidth: .infinity, alignment: .leading)
 
-                        Text(unit.body)
-                            .body3Typography()
-                            .foregroundColor(Color("secondaryText"))
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                        WordTruncatedBody(text: unit.body, foregroundColor: Color("secondaryText"))
                     }
                 }
                 .padding(.horizontal, 16)
@@ -1384,7 +1392,7 @@ struct TodaysSnapshotLandingV6: View {
     
     private var formattedDate: String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "MMMM d"
+        formatter.dateFormat = "EEEE, MMMM d"
         return formatter.string(from: Date())
     }
     
@@ -1707,11 +1715,23 @@ struct SnapshotUnitDetailV6: View {
     let unit: V6SnapshotUnit
     @Environment(\.dismiss) private var dismiss
 
+    // Made-up sub-bullets that expand on the thesis sentence.
+    private var detailBullets: [String] {
+        [
+            "Forecasters are calling for 18 to 24 inches of new snow above 9,000 feet between Friday night and Sunday morning.",
+            "Heaviest accumulation is expected along the I-70 corridor, with several previously-closed lifts reopening in time for the weekend.",
+            "Mountain towns have issued winter parking advisories; chains may be required on Loveland and Vail Pass after midnight Friday.",
+            "Lift tickets are tracking 12% cheaper than the same weekend last year, and lodging availability is unusually strong for late-season powder.",
+            "Vail, Breckenridge, and Copper are reporting the deepest base depths in the state heading into the storm."
+        ]
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             FDSNavigationBarCentered(
                 title: "Today's snapshot",
-                backAction: { dismiss() }
+                backAction: { dismiss() },
+                icon1: { FDSIconButton(icon: "share-outline", action: {}) }
             )
 
             ScrollView {
@@ -1725,13 +1745,43 @@ struct SnapshotUnitDetailV6: View {
                         .padding(.top, 16)
                         .padding(.bottom, 12)
 
-                    // Body
+                    // Thesis sentence
                     Text(unit.body)
                         .body3Typography()
                         .foregroundColor(Color("primaryText"))
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, 12)
-                        .padding(.bottom, 20)
+                        .padding(.bottom, 16)
+
+                    // Sub-bullets (key facts at a glance)
+                    VStack(alignment: .leading, spacing: 10) {
+                        ForEach(detailBullets, id: \.self) { bullet in
+                            HStack(alignment: .firstTextBaseline, spacing: 10) {
+                                Text("•")
+                                    .body3Typography()
+                                    .foregroundColor(Color("primaryText"))
+                                Text(bullet)
+                                    .body3Typography()
+                                    .foregroundColor(Color("primaryText"))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.bottom, 16)
+
+                    // Sources sub-pill
+                    HStack {
+                        FDSActionChip(
+                            size: .small,
+                            label: "Sources",
+                            isMenu: false,
+                            action: {}
+                        )
+                        Spacer()
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.bottom, 20)
 
                     // 2×2 media grid
                     VStack(spacing: 8) {
@@ -1787,6 +1837,100 @@ struct SnapshotUnitDetailV6: View {
         }
         .aspectRatio(172 / 259.571, contentMode: .fit)
         .contentShape(RoundedRectangle(cornerRadius: 12))
+    }
+}
+
+// MARK: - Word-Boundary Truncated Body Text
+//
+// Truncates body3-styled text to fit in `lineLimit` lines while ALWAYS breaking
+// after a complete word (so we never see "th…" or "announc…"). Measures the
+// available width via a hidden GeometryReader, then walks word-by-word to find
+// the longest prefix + "…" that still fits in the height budget.
+struct WordTruncatedBody: View {
+    let text: String
+    let foregroundColor: Color
+    var lineLimit: Int = 2
+
+    @State private var availableWidth: CGFloat = 0
+
+    private static let measurementFont = UIFont.systemFont(ofSize: 15, weight: .regular)
+    // tuned: 1 → 3 (loosened body3 line-spacing on highlight rows + hero by ~2pt)
+    private static let lineSpacing: CGFloat = 3
+
+    var body: some View {
+        Text(displayText)
+            .body3Typography()
+            .lineSpacing(Self.lineSpacing) // overrides the 1pt baseline from body3Typography
+            .foregroundColor(foregroundColor)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                GeometryReader { geo in
+                    Color.clear
+                        .onAppear { availableWidth = geo.size.width }
+                        .onChange(of: geo.size.width) { _, newValue in
+                            availableWidth = newValue
+                        }
+                }
+            )
+    }
+
+    private var displayText: String {
+        guard availableWidth > 0 else { return text }
+        return Self.wordBoundaryTruncate(
+            text: text,
+            font: Self.measurementFont,
+            width: availableWidth,
+            lineSpacing: Self.lineSpacing,
+            lineLimit: lineLimit
+        )
+    }
+
+    private static func wordBoundaryTruncate(
+        text: String,
+        font: UIFont,
+        width: CGFloat,
+        lineSpacing: CGFloat,
+        lineLimit: Int
+    ) -> String {
+        guard width > 0 else { return text }
+        let attrs: [NSAttributedString.Key: Any] = [.font: font]
+        // SwiftUI's lineSpacing adds extra space between baselines, so the
+        // total budget is N line heights + (N-1) extra spacing.
+        let lineHeight = font.lineHeight
+        let maxHeight = lineHeight * CGFloat(lineLimit)
+            + lineSpacing * CGFloat(max(lineLimit - 1, 0))
+            + 0.5 // small rounding buffer
+
+        let measureSize = CGSize(width: width, height: .greatestFiniteMagnitude)
+
+        let fullSize = (text as NSString).boundingRect(
+            with: measureSize,
+            options: [.usesLineFragmentOrigin, .usesFontLeading],
+            attributes: attrs,
+            context: nil
+        )
+        if fullSize.height <= maxHeight { return text }
+
+        let words = text.split(separator: " ", omittingEmptySubsequences: false)
+        var lastFitting = ""
+        var current = ""
+        for word in words {
+            let candidate = current.isEmpty ? String(word) : current + " " + String(word)
+            let withEllipsis = candidate + "…"
+            let s = (withEllipsis as NSString).boundingRect(
+                with: measureSize,
+                options: [.usesLineFragmentOrigin, .usesFontLeading],
+                attributes: attrs,
+                context: nil
+            )
+            if s.height <= maxHeight {
+                lastFitting = withEllipsis
+                current = candidate
+            } else {
+                break
+            }
+        }
+        return lastFitting.isEmpty ? text : lastFitting
     }
 }
 

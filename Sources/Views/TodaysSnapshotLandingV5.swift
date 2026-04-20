@@ -477,6 +477,7 @@ struct TodaysSnapshotLandingV5: View {
         .buttonStyle(FDSPressedState(cornerRadius: 8, scale: .small))
     }
 
+
     private func mediaCard(imageName: String, title: String, body: String) -> some View {
         ZStack(alignment: .bottomLeading) {
             GeometryReader { geo in
