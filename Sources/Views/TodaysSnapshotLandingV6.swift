@@ -1748,25 +1748,25 @@ struct SnapshotUnitDetailV6: View {
                         .padding(.top, 16)
                         .padding(.bottom, 12)
 
-                    // Thesis sentence
-                    Text(unit.body)
-                        .body3Typography()
-                        .foregroundColor(Color("primaryText"))
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, 12)
-                        .padding(.bottom, 16)
+                    // Thesis + sub-bullets (formatting copied from MVPv1 snapshotUnit:
+                    // single VStack(spacing: 12), .top-aligned HStack(spacing: 8))
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text(unit.body)
+                            .body3Typography()
+                            .foregroundColor(Color("primaryText"))
+                            .frame(maxWidth: .infinity, alignment: .leading)
 
-                    // Sub-bullets (key facts at a glance)
-                    VStack(alignment: .leading, spacing: 10) {
-                        ForEach(detailBullets, id: \.self) { bullet in
-                            HStack(alignment: .firstTextBaseline, spacing: 10) {
-                                Text("•")
-                                    .body3Typography()
-                                    .foregroundColor(Color("primaryText"))
-                                Text(bullet)
-                                    .body3Typography()
-                                    .foregroundColor(Color("primaryText"))
-                                    .frame(maxWidth: .infinity, alignment: .leading)
+                        VStack(alignment: .leading, spacing: 12) {
+                            ForEach(detailBullets, id: \.self) { bullet in
+                                HStack(alignment: .top, spacing: 8) {
+                                    Text("•")
+                                        .body3Typography()
+                                        .foregroundColor(Color("primaryText"))
+                                    Text(bullet)
+                                        .body3Typography()
+                                        .foregroundColor(Color("primaryText"))
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                }
                             }
                         }
                     }
