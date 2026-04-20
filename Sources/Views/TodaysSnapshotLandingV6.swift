@@ -1732,8 +1732,7 @@ struct SnapshotUnitDetailV6: View {
         VStack(spacing: 0) {
             FDSNavigationBarCentered(
                 title: "Today's snapshot",
-                backAction: { dismiss() },
-                icon1: { FDSIconButton(icon: "share-outline", action: {}) }
+                backAction: { dismiss() }
             )
 
             ScrollView {
@@ -1773,8 +1772,15 @@ struct SnapshotUnitDetailV6: View {
                     .padding(.horizontal, 12)
                     .padding(.bottom, 16)
 
-                    // Sources sub-pill
-                    HStack {
+                    // Share + Sources sub-pills (share moved here from header)
+                    HStack(spacing: 8) {
+                        FDSActionChip(
+                            size: .small,
+                            label: "",
+                            leftAddOn: .icon("share-outline"),
+                            isMenu: false,
+                            action: {}
+                        )
                         FDSActionChip(
                             size: .small,
                             label: "Sources",
