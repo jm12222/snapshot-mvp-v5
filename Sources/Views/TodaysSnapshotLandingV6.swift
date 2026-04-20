@@ -1816,17 +1816,33 @@ struct SnapshotUnitDetailV6: View {
                     .frame(width: geo.size.width, height: geo.size.height)
                     .clipped()
 
+                // FDS-standard subtle gradient under top-aligned text (mirrors
+                // FDSMediaCardOverlay.gradient: 0 → 0.6 black, 80pt tall, but
+                // anchored to the top since the avatar/username sit at the top).
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color.black.opacity(0.6),
+                        Color.black.opacity(0)
+                    ]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 80)
+                .frame(maxWidth: .infinity, alignment: .top)
+                .allowsHitTesting(false)
+
                 HStack(spacing: 8) {
                     Image(imageName)
                         .resizable()
                         .scaledToFill()
                         .frame(width: 20, height: 20)
                         .clipShape(Circle())
+                        .iconOnMediaShadow()
 
                     Text(username)
                         .font(.system(size: 13, weight: .semibold))
-                        .foregroundColor(.white)
-                        .shadow(color: Color.black.opacity(0.3), radius: 2, x: 0, y: 1)
+                        .foregroundStyle(Color("primaryTextOnMedia"))
+                        .textOnMediaShadow()
 
                     Spacer()
                 }
