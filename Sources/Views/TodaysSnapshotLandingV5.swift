@@ -186,7 +186,7 @@ struct TodaysSnapshotLandingV5: View {
                 VStack(spacing: 0) {
                     // Page 1: Header + Highlights
                     VStack(spacing: 0) {
-                        heroMediaCard
+                        headerSection
                             .id("header")
                             .background(
                                 GeometryReader { geo in
@@ -199,8 +199,6 @@ struct TodaysSnapshotLandingV5: View {
                                         }
                                 }
                             )
-
-                        headerSection
 
                         if currentOnboardingVariant == SnapshotOnboardingVariant.on.rawValue && showContextualMessage {
                             FDSContextualMessage(
@@ -612,10 +610,9 @@ struct TodaysSnapshotLandingV5: View {
 
     private func highlightsSection(proxy: ScrollViewProxy) -> some View {
         VStack(alignment: .leading, spacing: 0) {
-            FDSUnitHeader(
-                headlineText: "Highlights for you",
-                hierarchyLevel: .level3
-            )
+            heroMediaCard
+                .padding(.horizontal, 12)
+                .padding(.top, 12)
 
             VStack(spacing: 8) {
                 ForEach(v5HighlightItems.indices, id: \.self) { index in
