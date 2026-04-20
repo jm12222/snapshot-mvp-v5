@@ -72,7 +72,13 @@ struct HomeTab: View {
                         .id("top")
                         PostComposer(showComposer: $showComposer)
                         StoriesTray()
-                        
+
+                        // Today's Snapshot quick promotion: re-entry point
+                        // into the snapshot landing experience. Sits directly
+                        // under the stories tray so it's the first content
+                        // unit in the feed.
+                        FeedSnapshotQuickPromotion()
+
                         if isCreatingPost {
                             Separator()
                             FeedPostGlimmer()

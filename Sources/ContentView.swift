@@ -91,6 +91,13 @@ struct ContentView: View {
             }
             drawerState.clearPendingTabSwitch()
         }
+        .onReceive(drawerState.$requestShowSnapshot) { shouldShow in
+            guard shouldShow else { return }
+            withAnimation(.easeInOut(duration: 0.3)) {
+                showTodaysSnapshot = true
+            }
+            drawerState.clearShowSnapshotRequest()
+        }
         .onReceive(drawerState.$pendingNavigation) { destination in
             guard let destination = destination else { return }
             switch destination {

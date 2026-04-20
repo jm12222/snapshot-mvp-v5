@@ -54,6 +54,10 @@ class DrawerStateManager: ObservableObject {
     
     /// Signal for tab switching requests from the drawer.
     @Published var pendingTabSwitch: String? = nil
+
+    /// Signal a request to re-present the Today's Snapshot landing as a
+    /// full-screen experience (used by entry points like the Feed QP).
+    @Published var requestShowSnapshot: Bool = false
     
     func openDrawer() {
         withAnimation(.swapShuffleIn(MotionDuration.mediumIn)) {
@@ -113,5 +117,17 @@ class DrawerStateManager: ObservableObject {
     /// Clear pending tab switch after it's been handled.
     func clearPendingTabSwitch() {
         pendingTabSwitch = nil
+    }
+
+    /// Request the Today's Snapshot landing to re-present (e.g. from a
+    /// Feed entry point QP). ContentView observes `requestShowSnapshot`
+    /// and animates the landing back in.
+    func showSnapshot() {
+        requestShowSnapshot = true
+    }
+
+    /// Clear the snapshot show request after it's been handled.
+    func clearShowSnapshotRequest() {
+        requestShowSnapshot = false
     }
 }
