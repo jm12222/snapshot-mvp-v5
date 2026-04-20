@@ -609,8 +609,8 @@ struct TodaysSnapshotLandingV6: View {
         VStack(alignment: .leading, spacing: 0) {
             sectionHeader("Picked for you")
                 .padding(.horizontal, 16)
-                .padding(.top, 4) // header bottom (16) + date bottom (4) + this (4) = 24px below the date
-                .padding(.bottom, 12) // tuned: 8 → 12 (+4 below meta2 header)
+                .padding(.top, 5) // tuned: 4 → 5 (+1 above all section headers)
+                .padding(.bottom, 9) // tuned: 12 → 9 (-3 below all section headers)
 
             heroMediaCard
                 .padding(.horizontal, 12)
@@ -622,7 +622,8 @@ struct TodaysSnapshotLandingV6: View {
 
             sectionHeader("Friends")
                 .padding(.horizontal, 16)
-                .padding(.bottom, 12) // tuned: 8 → 12 (+4 below meta2 header)
+                .padding(.top, 1) // tuned: +1 above all section headers
+                .padding(.bottom, 9) // tuned: 12 → 9 (-3 below all section headers)
 
             groupedHighlights(units: v6FriendsUnits)
                 .padding(.horizontal, 12)
@@ -630,7 +631,8 @@ struct TodaysSnapshotLandingV6: View {
 
             sectionHeader("Sports you follow")
                 .padding(.horizontal, 16)
-                .padding(.bottom, 12) // tuned: 8 → 12 (+4 below meta2 header)
+                .padding(.top, 1) // tuned: +1 above all section headers
+                .padding(.bottom, 9) // tuned: 12 → 9 (-3 below all section headers)
 
             groupedHighlights(units: v6SportsYouFollowUnits)
                 .padding(.horizontal, 12)
@@ -638,7 +640,8 @@ struct TodaysSnapshotLandingV6: View {
 
             sectionHeader("Local")
                 .padding(.horizontal, 16)
-                .padding(.bottom, 12) // tuned: 8 → 12 (+4 below meta2 header)
+                .padding(.top, 1) // tuned: +1 above all section headers
+                .padding(.bottom, 9) // tuned: 12 → 9 (-3 below all section headers)
 
             groupedHighlights(units: v6LocalUnits)
                 .padding(.horizontal, 12)
