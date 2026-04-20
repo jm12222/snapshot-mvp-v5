@@ -1724,8 +1724,7 @@ struct SnapshotUnitDetailV6: View {
             "Forecasters are calling for 18 to 24 inches of new snow above 9,000 feet between Friday night and Sunday morning.",
             "Heaviest accumulation is expected along the I-70 corridor, with several previously-closed lifts reopening in time for the weekend.",
             "Mountain towns have issued winter parking advisories; chains may be required on Loveland and Vail Pass after midnight Friday.",
-            "Lift tickets are tracking 12% cheaper than the same weekend last year, and lodging availability is unusually strong for late-season powder.",
-            "Vail, Breckenridge, and Copper are reporting the deepest base depths in the state heading into the storm."
+            "Lift tickets are tracking 12% cheaper than the same weekend last year, and lodging availability is unusually strong for late-season powder."
         ]
     }
 
