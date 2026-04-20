@@ -1354,7 +1354,7 @@ struct TodaysSnapshotLandingV6: View {
 
                     VStack(alignment: .leading, spacing: 10) { // tuned: 14 → 10 (-4 below headline)
                         Text(unit.title)
-                            .headline3Typography() // tuned: emphasized → regular
+                            .headline3EmphasizedTypography() // reverted to emphasized (17pt bold) — matches hero
                             .foregroundColor(Color("primaryText"))
                             .frame(maxWidth: .infinity, alignment: .leading)
 
