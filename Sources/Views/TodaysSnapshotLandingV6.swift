@@ -493,7 +493,7 @@ struct TodaysSnapshotLandingV6: View {
 
             VStack(alignment: .leading, spacing: 8) {
                 Text(title)
-                    .headline3Typography() // tuned: emphasized → regular
+                    .headline3EmphasizedTypography() // tuned: regular → emphasized (17pt bold)
                     .foregroundStyle(Color("primaryText"))
                 WordTruncatedBody(text: body, foregroundColor: Color("secondaryText"))
             }
