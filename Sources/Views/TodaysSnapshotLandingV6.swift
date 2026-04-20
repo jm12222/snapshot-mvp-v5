@@ -475,7 +475,7 @@ struct TodaysSnapshotLandingV6: View {
                 body: "There's snow coming to Colorado! Here's a rundown of which ski resorts you should hit this weekend. Best prices and smallest crowds."
             )
         }
-        .buttonStyle(FDSPressedState(cornerRadius: 12)) // tuned: 8 → 12 (match thumbs + section container)
+        .buttonStyle(FDSPressedState(cornerRadius: 16)) // tuned: 12 → 16
     }
 
     private func mediaCard(imageName: String, title: String, body: String) -> some View {
@@ -507,9 +507,9 @@ struct TodaysSnapshotLandingV6: View {
         // unchanged). At 350-ish pt wide, scaledToFill keeps the full image
         // vertical visible and recrops by reducing horizontal side-cropping.
         .frame(height: 258)
-        .clipShape(RoundedRectangle(cornerRadius: 12)) // tuned: 8 → 12 (match thumbs + section container)
+        .clipShape(RoundedRectangle(cornerRadius: 16)) // tuned: 12 → 16
         .overlay(
-            RoundedRectangle(cornerRadius: 12) // tuned: 8 → 12 (match thumbs + section container)
+            RoundedRectangle(cornerRadius: 16) // tuned: 12 → 16
                 .stroke(Color("mediaInnerBorder"), lineWidth: 0.5)
         )
     }
