@@ -501,7 +501,7 @@ struct TodaysSnapshotLandingV6: View {
                     .clipped()
             }
 
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: 11) { // tuned: 8 → 11 (+3pt below headline)
                 Text(title)
                     .headline3EmphasizedTypography() // tuned: regular → emphasized (17pt bold)
                     .foregroundStyle(Color("primaryText"))
