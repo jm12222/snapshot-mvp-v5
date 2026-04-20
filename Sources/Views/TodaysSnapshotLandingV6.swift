@@ -1832,10 +1832,50 @@ struct SnapshotUnitDetailV6: View {
                 }
             }
             .background(Color("cardBackground"))
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                floatingAskComposer
+            }
         }
         .background(Color("cardBackground"))
         .hideFDSTabBar(true)
         .toolbar(.hidden, for: .navigationBar)
+    }
+
+    // Persistent floating "Ask anything" composer pinned to the bottom of the
+    // detail page. Uses safeAreaInset so the ScrollView reserves space for it
+    // and content above never gets clipped. Whole pill is one tap target — the
+    // trailing circular icon is a visual affordance, not a separate button.
+    private var floatingAskComposer: some View {
+        Button(action: {}) {
+            HStack(spacing: 8) {
+                Text("Ask anything")
+                    .body3Typography()
+                    .foregroundColor(Color("secondaryText"))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                ZStack {
+                    Circle()
+                        .fill(Color("webWash"))
+                        .frame(width: 36, height: 36)
+                    Image("gen-ai-magnifying-glass-outline")
+                        .resizable()
+                        .renderingMode(.template)
+                        .scaledToFit()
+                        .frame(width: 20, height: 20)
+                        .foregroundStyle(Color("primaryIcon"))
+                }
+            }
+            .padding(.leading, 20)
+            .padding(.trailing, 8)
+            .padding(.vertical, 8)
+            .frame(maxWidth: .infinity)
+            .background(Color("cardBackground"))
+            .clipShape(RoundedRectangle(cornerRadius: 28))
+        }
+        .buttonStyle(FDSPressedState(cornerRadius: 28))
+        .responsiveUIShadow(cornerRadius: 28)
+        .padding(.horizontal, 12)
+        .padding(.bottom, 12)
     }
 
     private func detailMediaCard(imageName: String, username: String) -> some View {
