@@ -126,6 +126,8 @@ struct ContentView: View {
         }
         if currentDemoMode == SnapshotDemoMode.v6.rawValue {
             TodaysSnapshotLandingV6(onBack: backAction)
+        } else if currentDemoMode == SnapshotDemoMode.v6UXR.rawValue {
+            TodaysSnapshotLandingV6UXR(onBack: backAction)
         } else if currentDemoMode == SnapshotDemoMode.v5.rawValue {
             TodaysSnapshotLandingV5(onBack: backAction)
         } else {
