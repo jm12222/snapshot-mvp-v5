@@ -3,6 +3,19 @@ import AVKit
 import AVFoundation
 import CoreMedia
 
+// MARK: - V5 Unit Model
+
+struct V5SnapshotUnit: Identifiable, Hashable {
+    let id: Int
+    let title: String
+    let body: String
+    let image1: String
+    let image2: String
+    let image3: String
+    let image4: String
+    let usernames: [String]
+}
+
 // MARK: - Today's Snapshot v5
 
 struct TodaysSnapshotLandingV5: View {
@@ -34,9 +47,21 @@ struct TodaysSnapshotLandingV5: View {
     @State private var showFeedbackToast = false
     @State private var feedbackToastUnitId: Int? = nil
     @State private var selectedPivotQuery: String? = nil
-    
+    @State private var selectedUnit: V5SnapshotUnit? = nil
+
     // DEBUG: Toggle this to show/hide scroll position indicator
     private let showScrollDebug = false
+
+    private var v5Units: [V5SnapshotUnit] {
+        [
+            V5SnapshotUnit(id: 0, title: "Snow finally comes to Colorado",                              body: "There's snow coming to Colorado! Here's a rundown of which ski resorts you should hit this weekend. Best prices and smallest crowds.",                                                 image1: "ski-colorado",      image2: "snow-colorado",     image3: "blizzard",           image4: "ski-colorado",      usernames: ["Colorado Ski Authority", "Mountain Report", "Powder Alert", "Resort Guide"]),
+            V5SnapshotUnit(id: 1, title: "Nothing Technologies unveils new headphones attracting tech nerds", body: "New earphone and camera are launched by Nothing Technologies that you are interested in.",                                                                                    image1: "headphones",        image2: "nothing-headphones", image3: "headphones",         image4: "nothing-headphones", usernames: ["The Verge", "Tech Insider", "Wired", "Engadget"]),
+            V5SnapshotUnit(id: 2, title: "Brooklyn's liminal night photography spots this April",       body: "Brooklyn is known for its vibrant nightlife and unique photo opportunities. The best options are always hidden.",                                                                   image1: "brooklyn-photo",    image2: "la-cinema",          image3: "brooklyn-photo",    image4: "la-cinema",          usernames: ["Brooklyn Magazine", "NYC Photo", "Street Lens", "Urban Frame"]),
+            V5SnapshotUnit(id: 3, title: "Upcoming birthdays from your Facebook friends",              body: "Frederic, Anna and Shelly are having their birthday this week.",                                                                                                                    image1: "birthday",          image2: "children-museum-winter", image3: "pantone-color-year", image4: "birthday",         usernames: ["Frederic", "Anna", "Shelly", "Friends"]),
+            V5SnapshotUnit(id: 4, title: "Syracuse plays Saint Joseph's on March 18",                  body: "Brandon Marcus, Amelia Santos and 20 others are celebrating their birthdays. Plan for their special day!",                                                                         image1: "syracuse",          image2: "lakers-basketball",  image3: "syracuse",          image4: "lakers-basketball",  usernames: ["Syracuse Athletics", "CBS Sports", "ESPN", "March Madness"]),
+            V5SnapshotUnit(id: 5, title: "Cassette player revival",                                    body: "Modern cassette players like the FiiO CP26 are sparking a retro tech revival among analog audio collectors.",                                                                      image1: "casette-fiio",      image2: "casette-fiio",       image3: "casette-fiio",      image4: "casette-fiio",       usernames: ["Analog Audio", "Retro Tech", "FiiO Official", "Sound Collector"]),
+        ]
+    }
     
     var body: some View {
         ScrollViewReader { proxy in
@@ -94,6 +119,9 @@ struct TodaysSnapshotLandingV5: View {
         .navigationDestination(item: $selectedPivotQuery) { query in
             SearchAIExplorerView(queryTitle: query)
         }
+        .navigationDestination(item: $selectedUnit) { unit in
+            SnapshotUnitDetailV5(unit: unit)
+        }
         .overlay(sourcesOverlay)
         .overlay {
             InstantFeedbackContainer(
@@ -144,7 +172,6 @@ struct TodaysSnapshotLandingV5: View {
         ZStack(alignment: .topLeading) {
             mainContentLayer(proxy: proxy)
             debugOverlay
-            floatingActionButton(proxy: proxy)
         }
     }
     
@@ -184,52 +211,23 @@ struct TodaysSnapshotLandingV5: View {
             
             ScrollView {
                 VStack(spacing: 0) {
-                    // Page 1: Header + Highlights
-                    VStack(spacing: 0) {
-                        headerSection
-                            .id("header")
-                            .background(
-                                GeometryReader { geo in
-                                    Color.clear
-                                        .onChange(of: geo.frame(in: .global).minY) { oldValue, newValue in
-                                            if initialY == 0 {
-                                                initialY = newValue
-                                            }
-                                            scrollOffset = max(0, initialY - newValue)
+                    headerSection
+                        .id("header")
+                        .background(
+                            GeometryReader { geo in
+                                Color.clear
+                                    .onChange(of: geo.frame(in: .global).minY) { oldValue, newValue in
+                                        if initialY == 0 {
+                                            initialY = newValue
                                         }
-                                }
-                            )
-
-                        if currentOnboardingVariant == SnapshotOnboardingVariant.on.rawValue && showContextualMessage {
-                            FDSContextualMessage(
-                                headlineText: "✨ Personalize your daily snapshot",
-                                bodyText: "Daily updates on what matters to you. Take a quick quiz to shape your feed.",
-                                showDismiss: true,
-                                onDismiss: {
-                                    withAnimation(.moveOut(MotionDuration.shortOut)) {
-                                        showContextualMessage = false
+                                        scrollOffset = max(0, initialY - newValue)
                                     }
-                                },
-                                bottomAddOn: .button(label: "Take quiz", variant: .primary, action: {
-                                    showOnboardingQuiz = true
-                                })
-                            )
-                            .padding(.horizontal, 12)
-                            .padding(.bottom, 12)
-                            .transition(.opacity.combined(with: .scale(scale: 0.95)))
-                        }
-                        
-                        highlightsSection(proxy: proxy)
-                            .id("highlights")
-                    }
-                    .containerRelativeFrame(.vertical, alignment: .top)
-                    
-                    // Pages 2+: Snapshot Units (each full-page) + Footer
-                    snapshotUnitsContainer(proxy: proxy)
+                            }
+                        )
+
+                    highlightsSection(proxy: proxy)
                 }
-                .scrollTargetLayout()
             }
-            .scrollTargetBehavior(.paging)
         }
     }
     
@@ -589,14 +587,9 @@ struct TodaysSnapshotLandingV5: View {
     // MARK: - Highlights Section
 
     private var v5HighlightItems: [HighlightItem] {
-        [
-            HighlightItem(emoji: "", title: "Snow finally comes to Colorado",                               body: "There's snow coming to Colorado! Here's a rundown of which ski resorts you should hit this weekend.", profileImage: "ski-colorado"),
-            HighlightItem(emoji: "", title: "Nothing Technologies unveils new headphones",                  body: "New earphone and camera are launched by Nothing Technologies that you are interested in.",           profileImage: "nothing-headphones"),
-            HighlightItem(emoji: "", title: "Brooklyn's liminal night photography spots this April",        body: "Brooklyn is known for its vibrant nightlife and unique photo opportunities.",                        profileImage: "brooklyn-photo"),
-            HighlightItem(emoji: "", title: "Upcoming birthdays from your Facebook friends",               body: "Frederic, Anna and Shelly are having their birthday this week.",                                     profileImage: "birthday"),
-            HighlightItem(emoji: "", title: "Syracuse plays Saint Joseph's on March 18",                   body: "Brandon Marcus, Amelia Santos and 20 others are celebrating their birthdays.",                      profileImage: "syracuse"),
-            HighlightItem(emoji: "", title: "Cassette player revival",                                     body: "Modern cassette players like the FiiO CP26 are sparking a retro tech revival.",                    profileImage: "casette-fiio"),
-        ]
+        v5Units.map { unit in
+            HighlightItem(emoji: "", title: unit.title, body: unit.body, profileImage: unit.image1)
+        }
     }
 
     private func highlightsSection(proxy: ScrollViewProxy) -> some View {
@@ -1287,12 +1280,8 @@ struct TodaysSnapshotLandingV5: View {
         let isHeavy = currentTextHierarchy == TextHierarchyVariant.heavy.rawValue
         
         return Button(action: {
-            isProgrammaticScroll = true
-            withAnimation(.easeInOut(duration: 0.45)) {
-                proxy.scrollTo("snapshot-\(index + 1)", anchor: .top)
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                isProgrammaticScroll = false
+            if index < v5Units.count {
+                selectedUnit = v5Units[index]
             }
         }) {
             VStack(alignment: .leading, spacing: 10) {
@@ -1647,6 +1636,95 @@ struct TodaysSnapshotLandingV5: View {
         .shadow(color: Color.black.opacity(0.05), radius: 0, x: 0, y: -1)
     }
     
+}
+
+// MARK: - Snapshot Unit Detail View (v5)
+
+struct SnapshotUnitDetailV5: View {
+    let unit: V5SnapshotUnit
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        VStack(spacing: 0) {
+            FDSNavigationBarCentered(
+                title: "Today's snapshot",
+                backAction: { dismiss() }
+            )
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
+                    // Title
+                    Text(unit.title)
+                        .headline2EmphasizedTypography()
+                        .foregroundColor(Color("primaryText"))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 12)
+                        .padding(.top, 16)
+                        .padding(.bottom, 12)
+
+                    // Body
+                    Text(unit.body)
+                        .body3Typography()
+                        .foregroundColor(Color("primaryText"))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 12)
+                        .padding(.bottom, 20)
+
+                    // 2×2 media grid
+                    VStack(spacing: 8) {
+                        HStack(spacing: 8) {
+                            detailMediaCard(imageName: unit.image1, username: unit.usernames[0])
+                            detailMediaCard(imageName: unit.image2, username: unit.usernames[1])
+                        }
+                        HStack(spacing: 8) {
+                            detailMediaCard(imageName: unit.image3, username: unit.usernames[2])
+                            detailMediaCard(imageName: unit.image4, username: unit.usernames[3])
+                        }
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.bottom, 24)
+                }
+            }
+            .background(Color("cardBackground"))
+        }
+        .background(Color("cardBackground"))
+        .hideFDSTabBar(true)
+        .toolbar(.hidden, for: .navigationBar)
+    }
+
+    private func detailMediaCard(imageName: String, username: String) -> some View {
+        GeometryReader { geo in
+            ZStack(alignment: .topLeading) {
+                Image(imageName)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: geo.size.width, height: geo.size.height)
+                    .clipped()
+
+                HStack(spacing: 8) {
+                    Image(imageName)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 20, height: 20)
+                        .clipShape(Circle())
+
+                    Text(username)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(.white)
+                        .shadow(color: Color.black.opacity(0.3), radius: 2, x: 0, y: 1)
+
+                    Spacer()
+                }
+                .padding(12)
+            }
+            .frame(width: geo.size.width, height: geo.size.height)
+            .cornerRadius(12)
+            .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color("borderUiEmphasis"), lineWidth: 1))
+            .clipped()
+        }
+        .aspectRatio(172 / 259.571, contentMode: .fit)
+        .contentShape(RoundedRectangle(cornerRadius: 12))
+    }
 }
 
 #Preview {
