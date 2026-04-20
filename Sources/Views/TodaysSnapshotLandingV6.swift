@@ -1744,6 +1744,8 @@ struct TodaysSnapshotLandingV6: View {
 
 struct SnapshotUnitDetailV6: View {
     @State private var entranceVisible = false
+    @State private var askText: String = ""
+    @FocusState private var askFieldFocused: Bool
 
     let unit: V6SnapshotUnit
     @Environment(\.dismiss) private var dismiss
@@ -1903,23 +1905,48 @@ struct SnapshotUnitDetailV6: View {
     //   • 56pt pill, cornerRadius 28, regularMaterial blur with cardBackground
     //     tint, FDS responsiveUIShadow for the floating elevation
     //   • FDS placeholder pattern: body2 (17pt) "Ask anything" in
-    //     placeholderTextDefault (matches FDSTextInput placeholder)
-    //   • Trailing 36pt secondaryButtonBackgroundFloating circle with a 24pt
-    //     gen-ai-magnifying-glass-outline icon in secondaryIcon
+    //     placeholderTextDefault (matches FDSTextInput placeholder); typing
+    //     swaps the text color to primaryText (active state)
+    //   • Trailing 36pt secondaryButtonBackgroundFloating circle with a 20pt
+    //     gen-ai-magnifying-glass-outline icon in secondaryIcon — also acts
+    //     as the submit affordance (taps the magnifier to dismiss the keyboard
+    //     and "send" the query in this prototype)
     //   • Bottom-of-pill to bottom-of-screen = exactly 16pt (composer ignores
     //     the bottom safe area so the gap is measured to the physical edge,
     //     not the safe-area edge)
-    // Whole pill is one tap target — the icon circle is a visual affordance.
+    // Tapping anywhere along the pill focuses the field; the magnifier circle
+    // is a visual + submit affordance.
     private var floatingAskComposer: some View {
-        Button(action: {}) {
-            HStack(spacing: 8) {
-                // FDS placeholder text pattern: body2Typography +
-                // placeholderTextDefault (mirrors FDSTextInput line 184-187).
-                Text("Ask anything")
+        HStack(spacing: 8) {
+            // Active text input. Foreground color flips between
+            // placeholderTextDefault (empty) and primaryText (typing) so
+            // the field reads as active state per FDS conventions.
+            ZStack(alignment: .leading) {
+                if askText.isEmpty {
+                    Text("Ask anything")
+                        .body2Typography()
+                        .foregroundStyle(Color("placeholderTextDefault"))
+                        .allowsHitTesting(false)
+                }
+                TextField("", text: $askText)
                     .body2Typography()
-                    .foregroundStyle(Color("placeholderTextDefault"))
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .foregroundStyle(Color("primaryText"))
+                    .tint(Color("accentColor"))
+                    .focused($askFieldFocused)
+                    .submitLabel(.search)
+                    .onSubmit { askFieldFocused = false }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
 
+            // Magnifier circle = visual affordance + tap-to-submit. When the
+            // field is focused, tapping it dismisses the keyboard ("send").
+            Button(action: {
+                if askFieldFocused {
+                    askFieldFocused = false
+                } else {
+                    askFieldFocused = true
+                }
+            }) {
                 ZStack {
                     Circle()
                         .fill(Color("secondaryButtonBackgroundFloating"))
@@ -1928,27 +1955,30 @@ struct SnapshotUnitDetailV6: View {
                         .resizable()
                         .renderingMode(.template)
                         .scaledToFit()
-                        .frame(width: 20, height: 20) // tuned: 24 → 20 (one FDS size down)
-                        .foregroundStyle(Color("secondaryIcon")) // tuned: primaryIcon → secondaryIcon
+                        .frame(width: 20, height: 20)
+                        .foregroundStyle(Color("secondaryIcon"))
                 }
             }
-            .padding(.leading, 20)
-            .padding(.trailing, 4)
-            .frame(height: 56)
-            .frame(maxWidth: .infinity)
-            .background(
-                RoundedRectangle(cornerRadius: 28)
-                    .fill(.regularMaterial)
-            )
-            .background(
-                // Subtle white tint over the material so it reads white on
-                // light surfaces (matches the 76% white fill in Figma).
-                RoundedRectangle(cornerRadius: 28)
-                    .fill(Color("cardBackground").opacity(0.4))
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 28))
+            .buttonStyle(FDSPressedState(circle: true))
         }
-        .buttonStyle(FDSPressedState(cornerRadius: 28))
+        .padding(.leading, 20)
+        .padding(.trailing, 4)
+        .frame(height: 56)
+        .frame(maxWidth: .infinity)
+        .background(
+            RoundedRectangle(cornerRadius: 28)
+                .fill(.regularMaterial)
+        )
+        .background(
+            // Subtle white tint over the material so it reads white on
+            // light surfaces (matches the 76% white fill in Figma).
+            RoundedRectangle(cornerRadius: 28)
+                .fill(Color("cardBackground").opacity(0.4))
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 28))
+        // Tap anywhere along the empty pill area to focus the field.
+        .contentShape(RoundedRectangle(cornerRadius: 28))
+        .onTapGesture { askFieldFocused = true }
         .responsiveUIShadow(cornerRadius: 28)
         .padding(.horizontal, 16)
         .padding(.top, 16)
