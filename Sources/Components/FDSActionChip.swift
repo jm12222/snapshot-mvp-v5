@@ -73,10 +73,14 @@ struct FDSActionChip: View {
                     leftAddOnView(leftAddOn)
                 }
                 
-                // Label
-                textWithTypography(label)
-                    .foregroundStyle(textColor)
-                    .lineLimit(1)
+                // Label (skipped when empty so icon-only chips stay symmetric;
+                // an empty Text still contributes to the HStack's 6pt spacing
+                // and shifts the trailing edge, breaking visual balance)
+                if !label.isEmpty {
+                    textWithTypography(label)
+                        .foregroundStyle(textColor)
+                        .lineLimit(1)
+                }
                 
                 // Menu Icon
                 if isMenu {

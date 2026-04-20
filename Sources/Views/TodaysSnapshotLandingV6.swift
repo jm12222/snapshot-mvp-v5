@@ -1829,7 +1829,7 @@ struct SnapshotUnitDetailV6: View {
                     .v6EntranceAnimation(visible: entranceVisible, delay: 0.06)
 
                     // Share + Sources sub-pills (share moved here from header)
-                    HStack(spacing: 8) {
+                    HStack(spacing: 8) { // 8pt gap between share + sources
                         FDSActionChip(
                             size: .small,
                             label: "",
@@ -1846,7 +1846,7 @@ struct SnapshotUnitDetailV6: View {
                         Spacer()
                     }
                     .padding(.horizontal, 12)
-                    .padding(.bottom, 20)
+                    .padding(.bottom, 24) // tuned: 20 → 24 (+4pt before media grid)
                     .v6EntranceAnimation(visible: entranceVisible, delay: 0.12)
 
                     // 2×2 media grid
