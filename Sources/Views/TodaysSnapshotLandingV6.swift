@@ -1900,21 +1900,24 @@ struct SnapshotUnitDetailV6: View {
     // Persistent floating "Ask anything" composer pinned to the bottom of the
     // detail page. Spec mirrors the Figma "Floating bottom composer" frame
     // (file dPCTtNCUVZX7Vh21x8iRDB, node 284:22264):
-    //   • Outer 88pt frame with 16pt padding all around
-    //   • Vertical white gradient overlay (0 → 0.64 @ 30% → 0.92) that
-    //     touches the bottom edge of the screen
     //   • 56pt pill, cornerRadius 28, regularMaterial blur with cardBackground
     //     tint, FDS responsiveUIShadow for the floating elevation
-    //   • body2 (17pt) "Ask anything" placeholder in placeholderTextDefault
-    //   • Trailing 36pt secondaryButtonBackgroundFloating circle with an 18pt
-    //     gen-ai-magnifying-glass-outline icon
+    //   • FDS placeholder pattern: body2 (17pt) "Ask anything" in
+    //     placeholderTextDefault (matches FDSTextInput placeholder)
+    //   • Trailing 36pt secondaryButtonBackgroundFloating circle with a 24pt
+    //     gen-ai-magnifying-glass-outline icon in secondaryIcon
+    //   • Bottom-of-pill to bottom-of-screen = exactly 16pt (composer ignores
+    //     the bottom safe area so the gap is measured to the physical edge,
+    //     not the safe-area edge)
     // Whole pill is one tap target — the icon circle is a visual affordance.
     private var floatingAskComposer: some View {
         Button(action: {}) {
             HStack(spacing: 8) {
+                // FDS placeholder text pattern: body2Typography +
+                // placeholderTextDefault (mirrors FDSTextInput line 184-187).
                 Text("Ask anything")
                     .body2Typography()
-                    .foregroundColor(Color("placeholderTextDefault"))
+                    .foregroundStyle(Color("placeholderTextDefault"))
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 ZStack {
@@ -1925,8 +1928,8 @@ struct SnapshotUnitDetailV6: View {
                         .resizable()
                         .renderingMode(.template)
                         .scaledToFit()
-                        .frame(width: 18, height: 18)
-                        .foregroundStyle(Color("primaryIcon"))
+                        .frame(width: 24, height: 24) // tuned: 18 → 24
+                        .foregroundStyle(Color("secondaryIcon")) // tuned: primaryIcon → secondaryIcon
                 }
             }
             .padding(.leading, 20)
@@ -1948,7 +1951,11 @@ struct SnapshotUnitDetailV6: View {
         .buttonStyle(FDSPressedState(cornerRadius: 28))
         .responsiveUIShadow(cornerRadius: 28)
         .padding(.horizontal, 16)
-        .padding(.vertical, 16)
+        .padding(.top, 16)
+        .padding(.bottom, 16) // exact 16pt to physical screen bottom (combined
+                              // with .ignoresSafeArea below so the bottom gap
+                              // is NOT stacked on top of the home-indicator
+                              // safe-area inset)
         .background(alignment: .bottom) {
             // Gradient overlay from the Figma "Floating bottom composer"
             // outer frame. Extended past the safe area to reach the bottom
@@ -1965,6 +1972,7 @@ struct SnapshotUnitDetailV6: View {
             )
             .ignoresSafeArea(edges: .bottom)
         }
+        .ignoresSafeArea(.container, edges: .bottom)
     }
 
     private func detailMediaCard(imageName: String, username: String) -> some View {
