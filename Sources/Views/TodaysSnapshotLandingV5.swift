@@ -241,148 +241,88 @@ struct TodaysSnapshotLandingV5: View {
     private func snapshotUnitsContainer(proxy: ScrollViewProxy) -> some View {
         snapshotUnit(
             unitId: 1,
-            title: "🎨 Pantone's color of the year",
-            bodyText: "Pantone named Cloud Dancer its 2026 Color of the Year, signaling a shift toward softer palettes across design and fashion.",
-            bullets: [
-                "The warm off-white tone reflects a global desire for calm and simplicity in visual culture.",
-                "Fashion houses are already incorporating Cloud Dancer into upcoming spring collections.",
-                "Interior designers call it Pantone's softest and most versatile pick in over a decade."
-            ],
-            pivots: [
-                (label: "Cloud Dancer", image: nil),
-                (label: "Spring collections", image: nil),
-                (label: "Interior design", image: nil)
-            ],
-            image1: "pantone_new_1",
-            image2: "pantone_new_2",
-            image3: "pantone-2",
-            image4: "pantone-3",
-            usernames: ["Design Weekly", "Color Trends", "Studio Palette", "Creative Space"],
+            title: "Snow finally comes to Colorado",
+            bodyText: "There's snow coming to Colorado! Here's a rundown of which ski resorts you should hit this weekend. Best prices and smallest crowds.",
+            image1: "ski-colorado",
+            image2: "snow-colorado",
+            image3: "ski-colorado",
+            image4: "snow-colorado",
+            usernames: ["Colorado Ski Authority", "Mountain Report", "Powder Alert", "Resort Guide"],
             proxy: proxy
         )
         .containerRelativeFrame(.vertical, alignment: .top)
         .background(Color("cardBackground"))
         .id("snapshot-1")
-        
+
         snapshotUnit(
             unitId: 2,
-            title: "🏀 Jokic MVP race lead",
-            bodyText: "Despite missing recent games to minor injuries, Nikola Jokic remains the clear frontrunner in the MVP race this season.",
-            bullets: [
-                "His per-game efficiency and triple-double pace continue to separate him from other contenders.",
-                "Denver's record without Jokic underscores how central he is to the team's success.",
-                "Analysts say his playmaking and court control make the strongest case for a fourth MVP."
-            ],
-            pivots: [
-                (label: "Nikola Jokic", image: nil),
-                (label: "Denver Nuggets", image: nil),
-                (label: "MVP race", image: nil)
-            ],
-            image1: "nba_1",
-            image2: "nba_2",
-            image3: "nba_3",
-            image4: "nba_4",
-            usernames: ["Nuggets Nation", "Mile High Sports", "NBA Central", "Hoop Digest"],
+            title: "Nothing Technologies unveils new headphones attracting tech nerds",
+            bodyText: "New earphone and camera are launched by Nothing Technologies that you are interested in.",
+            image1: "headphones",
+            image2: "headphones",
+            image3: "headphones",
+            image4: "headphones",
+            usernames: ["The Verge", "Tech Insider", "Wired", "Engadget"],
             proxy: proxy
         )
         .containerRelativeFrame(.vertical, alignment: .top)
         .background(Color("cardBackground"))
         .id("snapshot-2")
-        
+
         snapshotUnit(
             unitId: 3,
-            title: "❄️ Children Museum winter programs",
-            bodyText: "Denver's Children Museum launched new winter programs focused on movement, sensory play, and early learning for younger kids.",
-            bullets: [
-                "Sessions use shorter time blocks and caregiver-friendly pacing for toddlers and preschoolers.",
-                "Indoor activities are designed to keep families active during Colorado's colder months.",
-                "Registration is now open with limited spots available for the February session."
-            ],
-            pivots: [
-                (label: "Children's Museum", image: nil),
-                (label: "Winter programs", image: nil),
-                (label: "Early learning", image: nil)
-            ],
-            image1: "WInterKids",
-            image2: "WInterKids-1",
-            image3: "WInterKids-2",
-            image4: "WInterKids-3",
-            usernames: ["Denver Museums", "Family Activities", "Kids Learning", "Play & Explore"],
+            title: "Brooklyn's liminal night photography spots this April",
+            bodyText: "Brooklyn is known for its vibrant nightlife and unique photo opportunities. The best options are always hidden.",
+            image1: "brooklyn-photo",
+            image2: "brooklyn-photo",
+            image3: "brooklyn-photo",
+            image4: "brooklyn-photo",
+            usernames: ["Brooklyn Magazine", "NYC Photo", "Street Lens", "Urban Frame"],
             proxy: proxy
         )
         .containerRelativeFrame(.vertical, alignment: .top)
         .background(Color("cardBackground"))
         .id("snapshot-3")
-        
+
         snapshotUnit(
             unitId: 4,
-            title: "🍌 High protein toddler snacks",
-            bodyText: "Dietitians are sharing easy ways to boost protein in toddler snacks using pantry staples like hemp hearts and nut butters.",
-            bullets: [
-                "Hemp hearts are a complete protein with all nine essential amino acids in a toddler-safe form.",
-                "Adding cottage cheese or Greek yogurt to fruit gives a quick protein bump without extra prep.",
-                "Experts say small ingredient swaps can meaningfully support healthy growth in early years."
-            ],
-            pivots: [
-                (label: "Hemp hearts", image: nil),
-                (label: "Protein snacks", image: nil),
-                (label: "Toddler meals", image: nil)
-            ],
-            image1: "toddler",
-            image2: "toddler-1",
-            image3: "toddler-2",
-            image4: "toddler-3",
-            usernames: ["Healthy Kids", "Parent Nutrition", "Toddler Meals", "Smart Snacks"],
+            title: "Upcoming birthdays from your Facebook friends",
+            bodyText: "Frederic, Anna and Shelly are having their birthday this week.",
+            image1: "birthday",
+            image2: "birthday",
+            image3: "birthday",
+            image4: "birthday",
+            usernames: ["Frederic", "Anna", "Shelly", "Friends"],
             proxy: proxy
         )
         .containerRelativeFrame(.vertical, alignment: .top)
         .background(Color("cardBackground"))
         .id("snapshot-4")
-        
+
         snapshotUnit(
             unitId: 5,
-            title: "🍣 Denver Restaurant Week",
-            bodyText: "Denver Restaurant Week returns with multi-course prix-fixe menus across the metro area, giving diners a chance to explore at lower prices.",
-            bullets: [
-                "Participating restaurants span downtown, RiNo, LoHi, and neighborhoods across the city.",
-                "Set price tiers make it easier to try higher-end spots that are usually harder to access.",
-                "Reservations are already booking fast for the most popular locations this year."
-            ],
-            pivots: [
-                (label: "RiNo District", image: nil),
-                (label: "Prix-fixe menus", image: nil),
-                (label: "Reservations", image: nil)
-            ],
-            image1: "DenverRestaruant",
-            image2: "DenverRestaruant-1",
-            image3: "DenverRestaruant-2",
-            image4: "DenverRestaruant-3",
-            usernames: ["Denver Eats", "Food Scene", "Mile High Dining", "Restaurant Guide"],
+            title: "Syracuse plays Saint Joseph's on March 18",
+            bodyText: "Brandon Marcus, Amelia Santos and 20 others are celebrating their birthdays. Plan for their special day!",
+            image1: "nba_1",
+            image2: "nba_2",
+            image3: "nba_3",
+            image4: "nba_4",
+            usernames: ["Syracuse Athletics", "CBS Sports", "ESPN", "March Madness"],
             proxy: proxy
         )
         .containerRelativeFrame(.vertical, alignment: .top)
         .background(Color("cardBackground"))
         .id("snapshot-5")
-        
+
         snapshotUnit(
             unitId: 6,
-            title: "🚀 SpaceX Starship launch window",
-            bodyText: "SpaceX is targeting a new Starship test flight as early as this week, pending final FAA clearance for the next-generation launch system.",
-            bullets: [
-                "The 48-hour launch window could open mid-week from Boca Chica with upgraded heat shielding.",
-                "Rapid reusability tests on the booster stage are the primary objective for this flight.",
-                "A successful mission would mark the fastest turnaround between Starship launches to date."
-            ],
-            pivots: [
-                (label: "SpaceX", image: nil),
-                (label: "Starship", image: nil),
-                (label: "FAA clearance", image: nil)
-            ],
-            image1: "image1",
-            image2: "image2",
-            image3: "image3",
-            image4: "image4",
-            usernames: ["Space News", "Launch Watch", "Orbit Daily", "Rocket Report"],
+            title: "Cassette player revival",
+            bodyText: "Modern cassette players like the FiiO CP26 are sparking a retro tech revival among analog audio collectors.",
+            image1: "casette-fiio",
+            image2: "casette-fiio",
+            image3: "casette-fiio",
+            image4: "casette-fiio",
+            usernames: ["Analog Audio", "Retro Tech", "FiiO Official", "Sound Collector"],
             proxy: proxy
         )
         .containerRelativeFrame(.vertical, alignment: .top)
@@ -658,20 +598,28 @@ struct TodaysSnapshotLandingV5: View {
     }
     
     // MARK: - Highlights Section
-    
+
+    private var v5HighlightItems: [HighlightItem] {
+        [
+            HighlightItem(emoji: "", title: "Snow finally comes to Colorado",                               body: "There's snow coming to Colorado! Here's a rundown of which ski resorts you should hit this weekend.", profileImage: "ski-colorado"),
+            HighlightItem(emoji: "", title: "Nothing Technologies unveils new headphones",                  body: "New earphone and camera are launched by Nothing Technologies that you are interested in.",           profileImage: "headphones"),
+            HighlightItem(emoji: "", title: "Brooklyn's liminal night photography spots this April",        body: "Brooklyn is known for its vibrant nightlife and unique photo opportunities.",                        profileImage: "brooklyn-photo"),
+            HighlightItem(emoji: "", title: "Upcoming birthdays from your Facebook friends",               body: "Frederic, Anna and Shelly are having their birthday this week.",                                     profileImage: "birthday"),
+            HighlightItem(emoji: "", title: "Syracuse plays Saint Joseph's on March 18",                   body: "Brandon Marcus, Amelia Santos and 20 others are celebrating their birthdays.",                      profileImage: "nba_1"),
+            HighlightItem(emoji: "", title: "Cassette player revival",                                     body: "Modern cassette players like the FiiO CP26 are sparking a retro tech revival.",                    profileImage: "casette-fiio"),
+        ]
+    }
+
     private func highlightsSection(proxy: ScrollViewProxy) -> some View {
-        // Highlights section with individual cards on gray background
         VStack(alignment: .leading, spacing: 0) {
-            // Section Header: "Highlights for you"
             FDSUnitHeader(
                 headlineText: "Highlights for you",
                 hierarchyLevel: .level3
             )
-            
-            // Individual highlight cards
+
             VStack(spacing: 8) {
-                ForEach(highlightItems.indices, id: \.self) { index in
-                    highlightListItem(item: highlightItems[index], index: index, proxy: proxy)
+                ForEach(v5HighlightItems.indices, id: \.self) { index in
+                    highlightListItem(item: v5HighlightItems[index], index: index, proxy: proxy)
                 }
             }
             .padding(.horizontal, 12)
@@ -679,7 +627,7 @@ struct TodaysSnapshotLandingV5: View {
             .padding(.bottom, 8)
         }
         .padding(.bottom, 140)
-        .background(Color("bottomSheetBackgroundDeemphasized"))  // Gray background F2F4F7
+        .background(Color("bottomSheetBackgroundDeemphasized"))
     }
     
     // MARK: - Footer Section
@@ -1352,17 +1300,15 @@ struct TodaysSnapshotLandingV5: View {
         
         return Button(action: {
             isProgrammaticScroll = true
-            
             withAnimation(.easeInOut(duration: 0.45)) {
                 proxy.scrollTo("snapshot-\(index + 1)", anchor: .top)
             }
-            
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 isProgrammaticScroll = false
             }
         }) {
             VStack(alignment: .leading, spacing: 10) {
-                Text("\(item.emoji) \(item.title)")
+                Text(item.title)
                     .if(isHeavy) { $0.headline3EmphasizedTypography() }
                     .if(!isHeavy) { $0.headline4Typography() }
                     .foregroundColor(Color("primaryText"))
@@ -1379,7 +1325,6 @@ struct TodaysSnapshotLandingV5: View {
         }
         .background(Color("cardBackground"))
         .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 2)
         .buttonStyle(FDSPressedState(cornerRadius: 12))
     }
     
@@ -1387,12 +1332,12 @@ struct TodaysSnapshotLandingV5: View {
     
     private func topicNameToSnapshotId(_ topicName: String) -> Int {
         switch topicName {
-        case "Pantone's Color of the Year": return 1
-        case "Jokic MVP race lead": return 2
-        case "Children Museum winter programs": return 3
-        case "High protein toddler snacks": return 4
-        case "Denver Restaurant Week": return 5
-        case "SpaceX Starship launch window": return 6
+        case "Snow finally comes to Colorado": return 1
+        case "Nothing Technologies unveils new headphones attracting tech nerds": return 2
+        case "Brooklyn's liminal night photography spots this April": return 3
+        case "Upcoming birthdays from your Facebook friends": return 4
+        case "Syracuse plays Saint Joseph's on March 18": return 5
+        case "Cassette player revival": return 6
         default: return selectedTopicId
         }
     }
