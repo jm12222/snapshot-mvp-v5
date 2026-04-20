@@ -153,6 +153,7 @@ struct FDSNavigationBarCentered<Icon1: View, Icon2: View, Icon3: View>: View {
     let backAction: () -> Void
     let backIcon: String
     let onMedia: Bool
+    let backgroundColor: Color?
     let icon1: Icon1
     let icon2: Icon2
     let icon3: Icon3
@@ -162,6 +163,7 @@ struct FDSNavigationBarCentered<Icon1: View, Icon2: View, Icon3: View>: View {
         backAction: @escaping () -> Void,
         backIcon: String = "chevron-left-filled",
         onMedia: Bool = false,
+        backgroundColor: Color? = nil,
         @ViewBuilder icon1: () -> Icon1 = { EmptyView() },
         @ViewBuilder icon2: () -> Icon2 = { EmptyView() },
         @ViewBuilder icon3: () -> Icon3 = { EmptyView() }
@@ -170,6 +172,7 @@ struct FDSNavigationBarCentered<Icon1: View, Icon2: View, Icon3: View>: View {
         self.backAction = backAction
         self.backIcon = backIcon
         self.onMedia = onMedia
+        self.backgroundColor = backgroundColor
         self.icon1 = icon1()
         self.icon2 = icon2()
         self.icon3 = icon3()
@@ -191,7 +194,7 @@ struct FDSNavigationBarCentered<Icon1: View, Icon2: View, Icon3: View>: View {
         }
         .padding(.horizontal, 12)
         .frame(height: 52)
-        .background(onMedia ? Color.clear : Color("surfaceBackground"))
+        .background(backgroundColor ?? (onMedia ? Color.clear : Color("surfaceBackground")))
         .overlay {
             // Title centered in the entire bar with constrained width
             if let title = title {

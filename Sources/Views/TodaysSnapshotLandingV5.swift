@@ -183,6 +183,9 @@ struct TodaysSnapshotLandingV5: View {
             FDSNavigationBarCentered(
                 title: "Today's snapshot",
                 backAction: {
+                    // If the long-press just opened the secret menu, swallow the tap
+                    // that fires on finger release (otherwise we'd dismiss immediately).
+                    if showSecretMenu { return }
                     if scrollOffset >= 10 {
                         withAnimation(.easeInOut(duration: 0.45)) {
                             proxy.scrollTo("header", anchor: .top)
@@ -194,7 +197,8 @@ struct TodaysSnapshotLandingV5: View {
                             dismiss()
                         }
                     }
-                }
+                },
+                backgroundColor: Color("bottomSheetBackgroundDeemphasized")
             )
             .simultaneousGesture(
                 LongPressGesture(minimumDuration: 0.6)
@@ -229,6 +233,7 @@ struct TodaysSnapshotLandingV5: View {
                 }
             }
         }
+        .background(Color("bottomSheetBackgroundDeemphasized").ignoresSafeArea())
     }
     
     // MARK: - Snapshot Units Container
@@ -460,14 +465,16 @@ struct TodaysSnapshotLandingV5: View {
     // MARK: - Hero Media Card
 
     private var heroMediaCard: some View {
-        mediaCard(
-            imageName: "ski-colorado",
-            title: "⛷️ Ski season in Colorado",
-            body: "Resorts across the state are reporting some of the best conditions in years following a strong December snowpack."
-        )
-        .padding(.horizontal, 12)
-        .padding(.top, 12)
-        .padding(.bottom, 4)
+        Button {
+            selectedUnit = v5Units.first
+        } label: {
+            mediaCard(
+                imageName: "ski-colorado",
+                title: "Snow finally comes to Colorado",
+                body: "There's snow coming to Colorado! Here's a rundown of which ski resorts you should hit this weekend. Best prices and smallest crowds."
+            )
+        }
+        .buttonStyle(FDSPressedState(cornerRadius: 8, scale: .small))
     }
 
     private func mediaCard(imageName: String, title: String, body: String) -> some View {
@@ -544,7 +551,7 @@ struct TodaysSnapshotLandingV5: View {
             // weatherChipPostMVP
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color("surfaceBackground"))
+        .background(Color("bottomSheetBackgroundDeemphasized"))
     }
     
     // MARK: - Weather Chip (MVP)
@@ -586,8 +593,13 @@ struct TodaysSnapshotLandingV5: View {
     
     // MARK: - Highlights Section
 
+    private var v5HighlightUnits: [V5SnapshotUnit] {
+        // Drop the first unit (Colorado ski) — it's shown as the hero media card above.
+        Array(v5Units.dropFirst())
+    }
+
     private var v5HighlightItems: [HighlightItem] {
-        v5Units.map { unit in
+        v5HighlightUnits.map { unit in
             HighlightItem(emoji: "", title: unit.title, body: unit.body, profileImage: unit.image1)
         }
     }
@@ -1280,8 +1292,8 @@ struct TodaysSnapshotLandingV5: View {
         let isHeavy = currentTextHierarchy == TextHierarchyVariant.heavy.rawValue
         
         return Button(action: {
-            if index < v5Units.count {
-                selectedUnit = v5Units[index]
+            if index < v5HighlightUnits.count {
+                selectedUnit = v5HighlightUnits[index]
             }
         }) {
             VStack(alignment: .leading, spacing: 10) {
@@ -1302,6 +1314,10 @@ struct TodaysSnapshotLandingV5: View {
         }
         .background(Color("cardBackground"))
         .cornerRadius(12)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color("mediaInnerBorder"), lineWidth: 0.5)
+        )
         .buttonStyle(FDSPressedState(cornerRadius: 12))
     }
     

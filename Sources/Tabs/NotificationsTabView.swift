@@ -81,7 +81,9 @@ struct NotificationsTab: View {
             }
             .background(Color("surfaceBackground"))
             .navigationDestination(isPresented: $showSnapshot) {
-                if currentDemoMode == SnapshotDemoMode.v5.rawValue {
+                if currentDemoMode == SnapshotDemoMode.v6.rawValue {
+                    TodaysSnapshotLandingV6(onBack: { showSnapshot = false })
+                } else if currentDemoMode == SnapshotDemoMode.v5.rawValue {
                     TodaysSnapshotLandingV5(onBack: { showSnapshot = false })
                 } else {
                     TodaysSnapshotLandingMVPv1(onBack: { showSnapshot = false })

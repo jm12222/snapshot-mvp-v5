@@ -3,96 +3,25 @@ import AVKit
 import AVFoundation
 import CoreMedia
 
-// MARK: - Demo Mode
+// MARK: - V6 Unit Model
 
-enum SnapshotDemoMode: String, CaseIterable, Identifiable {
-    case mvpV1 = "MVP-v1"
-    case v1Text = "v1-Text"
-    case v2MediaCard = "v2-MediaCard"
-    case v3HighlightsMediaPreview = "v3-Highlights (Media preview)"
-    case v4HighlightsFeedView = "v4-Highlights (Feed view)"
-    case v5 = "v5"
-    case v6 = "v6"
-    
-    var id: String { rawValue }
-    
-    var description: String {
-        switch self {
-        case .mvpV1: return "Lorem ipsum sit amet"
-        case .v1Text: return "Text-focused layout"
-        case .v2MediaCard: return "Media card feed"
-        case .v3HighlightsMediaPreview: return "Highlights + media preview"
-        case .v4HighlightsFeedView: return "Highlights + feed view"
-        case .v5: return "Work in progress"
-        case .v6: return "Work in progress"
-        }
-    }
-    
-    var icon: String {
-        switch self {
-        case .mvpV1: return "news-feed-home-filled"
-        case .v1Text: return "news-feed-home-filled"
-        case .v2MediaCard: return "news-feed-home-filled"
-        case .v3HighlightsMediaPreview: return "news-feed-home-filled"
-        case .v4HighlightsFeedView: return "news-feed-home-filled"
-        case .v5: return "news-feed-home-filled"
-        case .v6: return "news-feed-home-filled"
-        }
-    }
+struct V6SnapshotUnit: Identifiable, Hashable {
+    let id: Int
+    let title: String
+    let body: String
+    let image1: String
+    let image2: String
+    let image3: String
+    let image4: String
+    let usernames: [String]
 }
 
-// MARK: - Search Variant
+// MARK: - Today's Snapshot v6
 
-enum SnapshotSearchVariant: String, CaseIterable, Identifiable {
-    case off = "Off"
-    case searchPivots = "Search pivots"
-    case searchBar = "Search bar"
-    
-    var id: String { rawValue }
-}
-
-// MARK: - Onboarding Variant
-
-enum SnapshotOnboardingVariant: String, CaseIterable, Identifiable {
-    case off = "Off"
-    case on = "On"
-    
-    var id: String { rawValue }
-}
-
-// MARK: - Footer Variant
-
-enum SnapshotFooterVariant: String, CaseIterable, Identifiable {
-    case compact = "Compact"
-    case expanded = "Expanded"
-    
-    var id: String { rawValue }
-}
-
-// MARK: - Media Card Variant
-
-enum MediaCardVariant: String, CaseIterable, Identifiable {
-    case whiteCard = "White card"
-    case dynamicCard = "Dynamic card"
-    
-    var id: String { rawValue }
-}
-
-// MARK: - Text Hierarchy Variant
-
-enum TextHierarchyVariant: String, CaseIterable, Identifiable {
-    case light = "Light"
-    case heavy = "Heavy"
-    
-    var id: String { rawValue }
-}
-
-// MARK: - Today's Snapshot Scroll View v3
-
-struct TodaysSnapshotLandingMVPv1: View {
+struct TodaysSnapshotLandingV6: View {
     var onBack: (() -> Void)? = nil
     @Environment(\.dismiss) private var dismiss
-    @AppStorage("snapshotDemoMode") private var currentDemoMode: String = SnapshotDemoMode.mvpV1.rawValue
+    @AppStorage("snapshotDemoMode") private var currentDemoMode: String = SnapshotDemoMode.v6.rawValue
     @AppStorage("snapshotShowOnboarding") private var currentOnboardingVariant: String = SnapshotOnboardingVariant.off.rawValue
     @AppStorage("snapshotSearchVariant") private var currentSearchVariant: String = SnapshotSearchVariant.off.rawValue
     @AppStorage("snapshotMediaCardVariant") private var currentMediaCardVariant: String = MediaCardVariant.whiteCard.rawValue
@@ -118,9 +47,21 @@ struct TodaysSnapshotLandingMVPv1: View {
     @State private var showFeedbackToast = false
     @State private var feedbackToastUnitId: Int? = nil
     @State private var selectedPivotQuery: String? = nil
-    
+    @State private var selectedUnit: V6SnapshotUnit? = nil
+
     // DEBUG: Toggle this to show/hide scroll position indicator
     private let showScrollDebug = false
+
+    private var v6Units: [V6SnapshotUnit] {
+        [
+            V6SnapshotUnit(id: 0, title: "Snow finally comes to Colorado",                              body: "There's snow coming to Colorado! Here's a rundown of which ski resorts you should hit this weekend. Best prices and smallest crowds.",                                                 image1: "ski-colorado",      image2: "snow-colorado",     image3: "blizzard",           image4: "ski-colorado",      usernames: ["Colorado Ski Authority", "Mountain Report", "Powder Alert", "Resort Guide"]),
+            V6SnapshotUnit(id: 1, title: "Nothing Technologies unveils new headphones", body: "New earphone and camera are launched by Nothing Technologies that you are interested in.",                                                                                    image1: "headphones",        image2: "nothing-headphones", image3: "headphones",         image4: "nothing-headphones", usernames: ["The Verge", "Tech Insider", "Wired", "Engadget"]),
+            V6SnapshotUnit(id: 2, title: "Brooklyn's liminal night photography spots this April",       body: "Brooklyn is known for its vibrant nightlife and unique photo opportunities. The best options are always hidden.",                                                                   image1: "brooklyn-photo",    image2: "la-cinema",          image3: "brooklyn-photo",    image4: "la-cinema",          usernames: ["Brooklyn Magazine", "NYC Photo", "Street Lens", "Urban Frame"]),
+            V6SnapshotUnit(id: 3, title: "Upcoming birthdays",                                          body: "Frederic, Anna and Shelly are having their birthday this week.",                                                                                                                    image1: "birthday",          image2: "children-museum-winter", image3: "pantone-color-year", image4: "birthday",         usernames: ["Frederic", "Anna", "Shelly", "Friends"]),
+            V6SnapshotUnit(id: 4, title: "Syracuse plays Saint Joseph's on March 18",                  body: "Brandon Marcus, Amelia Santos and 20 others are celebrating their birthdays. Plan for their special day!",                                                                         image1: "syracuse",          image2: "lakers-basketball",  image3: "syracuse",          image4: "lakers-basketball",  usernames: ["Syracuse Athletics", "CBS Sports", "ESPN", "March Madness"]),
+            V6SnapshotUnit(id: 5, title: "Cassette player revival",                                    body: "Modern cassette players like the FiiO CP26 are sparking a retro tech revival among analog audio collectors.",                                                                      image1: "casette-fiio",      image2: "casette-fiio",       image3: "casette-fiio",      image4: "casette-fiio",       usernames: ["Analog Audio", "Retro Tech", "FiiO Official", "Sound Collector"]),
+        ]
+    }
     
     var body: some View {
         ScrollViewReader { proxy in
@@ -178,6 +119,9 @@ struct TodaysSnapshotLandingMVPv1: View {
         .navigationDestination(item: $selectedPivotQuery) { query in
             SearchAIExplorerView(queryTitle: query)
         }
+        .navigationDestination(item: $selectedUnit) { unit in
+            SnapshotUnitDetailV6(unit: unit)
+        }
         .overlay(sourcesOverlay)
         .overlay {
             InstantFeedbackContainer(
@@ -228,7 +172,6 @@ struct TodaysSnapshotLandingMVPv1: View {
         ZStack(alignment: .topLeading) {
             mainContentLayer(proxy: proxy)
             debugOverlay
-            floatingActionButton(proxy: proxy)
         }
     }
     
@@ -240,6 +183,9 @@ struct TodaysSnapshotLandingMVPv1: View {
             FDSNavigationBarCentered(
                 title: "Today's snapshot",
                 backAction: {
+                    // If the long-press just opened the secret menu, swallow the tap
+                    // that fires on finger release (otherwise we'd dismiss immediately).
+                    if showSecretMenu { return }
                     if scrollOffset >= 10 {
                         withAnimation(.easeInOut(duration: 0.45)) {
                             proxy.scrollTo("header", anchor: .top)
@@ -251,7 +197,8 @@ struct TodaysSnapshotLandingMVPv1: View {
                             dismiss()
                         }
                     }
-                }
+                },
+                backgroundColor: Color("cardBackground")
             )
             .simultaneousGesture(
                 LongPressGesture(minimumDuration: 0.6)
@@ -268,53 +215,25 @@ struct TodaysSnapshotLandingMVPv1: View {
             
             ScrollView {
                 VStack(spacing: 0) {
-                    // Page 1: Header + Highlights
-                    VStack(spacing: 0) {
-                        headerSection
-                            .id("header")
-                            .background(
-                                GeometryReader { geo in
-                                    Color.clear
-                                        .onChange(of: geo.frame(in: .global).minY) { oldValue, newValue in
-                                            if initialY == 0 {
-                                                initialY = newValue
-                                            }
-                                            scrollOffset = max(0, initialY - newValue)
+                    headerSection
+                        .id("header")
+                        .background(
+                            GeometryReader { geo in
+                                Color.clear
+                                    .onChange(of: geo.frame(in: .global).minY) { oldValue, newValue in
+                                        if initialY == 0 {
+                                            initialY = newValue
                                         }
-                                }
-                            )
-                        
-                        if currentOnboardingVariant == SnapshotOnboardingVariant.on.rawValue && showContextualMessage {
-                            FDSContextualMessage(
-                                headlineText: "✨ Personalize your daily snapshot",
-                                bodyText: "Daily updates on what matters to you. Take a quick quiz to shape your feed.",
-                                showDismiss: true,
-                                onDismiss: {
-                                    withAnimation(.moveOut(MotionDuration.shortOut)) {
-                                        showContextualMessage = false
+                                        scrollOffset = max(0, initialY - newValue)
                                     }
-                                },
-                                bottomAddOn: .button(label: "Take quiz", variant: .primary, action: {
-                                    showOnboardingQuiz = true
-                                })
-                            )
-                            .padding(.horizontal, 12)
-                            .padding(.bottom, 12)
-                            .transition(.opacity.combined(with: .scale(scale: 0.95)))
-                        }
-                        
-                        highlightsSection(proxy: proxy)
-                            .id("highlights")
-                    }
-                    .containerRelativeFrame(.vertical, alignment: .top)
-                    
-                    // Pages 2+: Snapshot Units (each full-page) + Footer
-                    snapshotUnitsContainer(proxy: proxy)
+                            }
+                        )
+
+                    highlightsSection(proxy: proxy)
                 }
-                .scrollTargetLayout()
             }
-            .scrollTargetBehavior(.paging)
         }
+        .background(Color("cardBackground").ignoresSafeArea())
     }
     
     // MARK: - Snapshot Units Container
@@ -323,148 +242,88 @@ struct TodaysSnapshotLandingMVPv1: View {
     private func snapshotUnitsContainer(proxy: ScrollViewProxy) -> some View {
         snapshotUnit(
             unitId: 1,
-            title: "🎨 Pantone's color of the year",
-            bodyText: "Pantone named Cloud Dancer its 2026 Color of the Year, signaling a shift toward softer palettes across design and fashion.",
-            bullets: [
-                "The warm off-white tone reflects a global desire for calm and simplicity in visual culture.",
-                "Fashion houses are already incorporating Cloud Dancer into upcoming spring collections.",
-                "Interior designers call it Pantone's softest and most versatile pick in over a decade."
-            ],
-            pivots: [
-                (label: "Cloud Dancer", image: nil),
-                (label: "Spring collections", image: nil),
-                (label: "Interior design", image: nil)
-            ],
-            image1: "pantone_new_1",
-            image2: "pantone_new_2",
-            image3: "pantone-2",
-            image4: "pantone-3",
-            usernames: ["Design Weekly", "Color Trends", "Studio Palette", "Creative Space"],
+            title: "Snow finally comes to Colorado",
+            bodyText: "There's snow coming to Colorado! Here's a rundown of which ski resorts you should hit this weekend. Best prices and smallest crowds.",
+            image1: "ski-colorado",
+            image2: "snow-colorado",
+            image3: "blizzard",
+            image4: "ski-colorado",
+            usernames: ["Colorado Ski Authority", "Mountain Report", "Powder Alert", "Resort Guide"],
             proxy: proxy
         )
         .containerRelativeFrame(.vertical, alignment: .top)
         .background(Color("cardBackground"))
         .id("snapshot-1")
-        
+
         snapshotUnit(
             unitId: 2,
-            title: "🏀 Jokic MVP race lead",
-            bodyText: "Despite missing recent games to minor injuries, Nikola Jokic remains the clear frontrunner in the MVP race this season.",
-            bullets: [
-                "His per-game efficiency and triple-double pace continue to separate him from other contenders.",
-                "Denver's record without Jokic underscores how central he is to the team's success.",
-                "Analysts say his playmaking and court control make the strongest case for a fourth MVP."
-            ],
-            pivots: [
-                (label: "Nikola Jokic", image: nil),
-                (label: "Denver Nuggets", image: nil),
-                (label: "MVP race", image: nil)
-            ],
-            image1: "nba_1",
-            image2: "nba_2",
-            image3: "nba_3",
-            image4: "nba_4",
-            usernames: ["Nuggets Nation", "Mile High Sports", "NBA Central", "Hoop Digest"],
+            title: "Nothing Technologies unveils new headphones attracting tech nerds",
+            bodyText: "New earphone and camera are launched by Nothing Technologies that you are interested in.",
+            image1: "headphones",
+            image2: "nothing-headphones",
+            image3: "headphones",
+            image4: "nothing-headphones",
+            usernames: ["The Verge", "Tech Insider", "Wired", "Engadget"],
             proxy: proxy
         )
         .containerRelativeFrame(.vertical, alignment: .top)
         .background(Color("cardBackground"))
         .id("snapshot-2")
-        
+
         snapshotUnit(
             unitId: 3,
-            title: "❄️ Children Museum winter programs",
-            bodyText: "Denver's Children Museum launched new winter programs focused on movement, sensory play, and early learning for younger kids.",
-            bullets: [
-                "Sessions use shorter time blocks and caregiver-friendly pacing for toddlers and preschoolers.",
-                "Indoor activities are designed to keep families active during Colorado's colder months.",
-                "Registration is now open with limited spots available for the February session."
-            ],
-            pivots: [
-                (label: "Children's Museum", image: nil),
-                (label: "Winter programs", image: nil),
-                (label: "Early learning", image: nil)
-            ],
-            image1: "WInterKids",
-            image2: "WInterKids-1",
-            image3: "WInterKids-2",
-            image4: "WInterKids-3",
-            usernames: ["Denver Museums", "Family Activities", "Kids Learning", "Play & Explore"],
+            title: "Brooklyn's liminal night photography spots this April",
+            bodyText: "Brooklyn is known for its vibrant nightlife and unique photo opportunities. The best options are always hidden.",
+            image1: "brooklyn-photo",
+            image2: "la-cinema",
+            image3: "brooklyn-photo",
+            image4: "la-cinema",
+            usernames: ["Brooklyn Magazine", "NYC Photo", "Street Lens", "Urban Frame"],
             proxy: proxy
         )
         .containerRelativeFrame(.vertical, alignment: .top)
         .background(Color("cardBackground"))
         .id("snapshot-3")
-        
+
         snapshotUnit(
             unitId: 4,
-            title: "🍌 High protein toddler snacks",
-            bodyText: "Dietitians are sharing easy ways to boost protein in toddler snacks using pantry staples like hemp hearts and nut butters.",
-            bullets: [
-                "Hemp hearts are a complete protein with all nine essential amino acids in a toddler-safe form.",
-                "Adding cottage cheese or Greek yogurt to fruit gives a quick protein bump without extra prep.",
-                "Experts say small ingredient swaps can meaningfully support healthy growth in early years."
-            ],
-            pivots: [
-                (label: "Hemp hearts", image: nil),
-                (label: "Protein snacks", image: nil),
-                (label: "Toddler meals", image: nil)
-            ],
-            image1: "toddler",
-            image2: "toddler-1",
-            image3: "toddler-2",
-            image4: "toddler-3",
-            usernames: ["Healthy Kids", "Parent Nutrition", "Toddler Meals", "Smart Snacks"],
+            title: "Upcoming birthdays from your Facebook friends",
+            bodyText: "Frederic, Anna and Shelly are having their birthday this week.",
+            image1: "birthday",
+            image2: "children-museum-winter",
+            image3: "pantone-color-year",
+            image4: "birthday",
+            usernames: ["Frederic", "Anna", "Shelly", "Friends"],
             proxy: proxy
         )
         .containerRelativeFrame(.vertical, alignment: .top)
         .background(Color("cardBackground"))
         .id("snapshot-4")
-        
+
         snapshotUnit(
             unitId: 5,
-            title: "🍣 Denver Restaurant Week",
-            bodyText: "Denver Restaurant Week returns with multi-course prix-fixe menus across the metro area, giving diners a chance to explore at lower prices.",
-            bullets: [
-                "Participating restaurants span downtown, RiNo, LoHi, and neighborhoods across the city.",
-                "Set price tiers make it easier to try higher-end spots that are usually harder to access.",
-                "Reservations are already booking fast for the most popular locations this year."
-            ],
-            pivots: [
-                (label: "RiNo District", image: nil),
-                (label: "Prix-fixe menus", image: nil),
-                (label: "Reservations", image: nil)
-            ],
-            image1: "DenverRestaruant",
-            image2: "DenverRestaruant-1",
-            image3: "DenverRestaruant-2",
-            image4: "DenverRestaruant-3",
-            usernames: ["Denver Eats", "Food Scene", "Mile High Dining", "Restaurant Guide"],
+            title: "Syracuse plays Saint Joseph's on March 18",
+            bodyText: "Brandon Marcus, Amelia Santos and 20 others are celebrating their birthdays. Plan for their special day!",
+            image1: "syracuse",
+            image2: "lakers-basketball",
+            image3: "syracuse",
+            image4: "lakers-basketball",
+            usernames: ["Syracuse Athletics", "CBS Sports", "ESPN", "March Madness"],
             proxy: proxy
         )
         .containerRelativeFrame(.vertical, alignment: .top)
         .background(Color("cardBackground"))
         .id("snapshot-5")
-        
+
         snapshotUnit(
             unitId: 6,
-            title: "🚀 SpaceX Starship launch window",
-            bodyText: "SpaceX is targeting a new Starship test flight as early as this week, pending final FAA clearance for the next-generation launch system.",
-            bullets: [
-                "The 48-hour launch window could open mid-week from Boca Chica with upgraded heat shielding.",
-                "Rapid reusability tests on the booster stage are the primary objective for this flight.",
-                "A successful mission would mark the fastest turnaround between Starship launches to date."
-            ],
-            pivots: [
-                (label: "SpaceX", image: nil),
-                (label: "Starship", image: nil),
-                (label: "FAA clearance", image: nil)
-            ],
-            image1: "image1",
-            image2: "image2",
-            image3: "image3",
-            image4: "image4",
-            usernames: ["Space News", "Launch Watch", "Orbit Daily", "Rocket Report"],
+            title: "Cassette player revival",
+            bodyText: "Modern cassette players like the FiiO CP26 are sparking a retro tech revival among analog audio collectors.",
+            image1: "casette-fiio",
+            image2: "casette-fiio",
+            image3: "casette-fiio",
+            image4: "casette-fiio",
+            usernames: ["Analog Audio", "Retro Tech", "FiiO Official", "Sound Collector"],
             proxy: proxy
         )
         .containerRelativeFrame(.vertical, alignment: .top)
@@ -603,6 +462,53 @@ struct TodaysSnapshotLandingMVPv1: View {
         .animation(.easeInOut(duration: 0.3), value: showSourcesSheet)
     }
     
+    // MARK: - Hero Media Card
+
+    private var heroMediaCard: some View {
+        mediaCard(
+            imageName: "ski-colorado",
+            title: "Snow finally comes to Colorado",
+            body: "There's snow coming to Colorado! Here's a rundown of which ski resorts you should hit this weekend. Best prices and smallest crowds."
+        )
+    }
+
+    private func mediaCard(imageName: String, title: String, body: String) -> some View {
+        // Regular-material strip treatment: title + body sit in a light material
+        // panel that overlays the bottom of the image. Image is sized taller
+        // and biased upward so the subject (skier) reads cleanly above the
+        // strip instead of being awkwardly sliced by it.
+        ZStack(alignment: .bottom) {
+            GeometryReader { geo in
+                Image(imageName)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: geo.size.width, height: geo.size.height, alignment: .top)
+                    .clipped()
+            }
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text(title)
+                    .headline3EmphasizedTypography()
+                    .foregroundStyle(Color("primaryText"))
+                Text(body)
+                    .body3Typography()
+                    .foregroundStyle(Color("secondaryText"))
+                    .lineLimit(2)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 12)
+            .padding(.top, 20) // +8 above headline per request
+            .padding(.bottom, 12)
+            .background(.regularMaterial)
+        }
+        .frame(height: 300)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(Color("mediaInnerBorder"), lineWidth: 0.5)
+        )
+    }
+
     // MARK: - Header Section
     
     private var headerSection: some View {
@@ -620,20 +526,11 @@ struct TodaysSnapshotLandingMVPv1: View {
                 Spacer().frame(height: 12)
                 
                 // Metadata
-                HStack(spacing: 4) {
-                    Image("gen-ai-star-filled")
-                        .renderingMode(.template)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 12, height: 12)
-                        .foregroundStyle(Color("secondaryText"))
-                    
-                    Text("Generated by AI")
-                        .meta2Typography()
-                        .foregroundStyle(Color("secondaryText"))
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.bottom, 4)  // Inner bottom padding
+                Text("6 things to start your day")
+                    .meta2Typography()
+                    .foregroundStyle(Color("secondaryText"))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.bottom, 4)
             }
             .padding(.horizontal, 12)
             .padding(.top, 12)  // Outer top padding
@@ -646,7 +543,7 @@ struct TodaysSnapshotLandingMVPv1: View {
             // weatherChipPostMVP
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color("surfaceBackground"))
+        .background(Color("cardBackground"))
     }
     
     // MARK: - Weather Chip (MVP)
@@ -687,28 +584,80 @@ struct TodaysSnapshotLandingMVPv1: View {
     }
     
     // MARK: - Highlights Section
-    
+
+    private var v6PickedForYouUnits: [V6SnapshotUnit] {
+        // Editorially-curated picks. Hero (index 0) renders separately as the
+        // media card. Cassette (5) moved to the very bottom of the list.
+        [v6Units[1]]
+    }
+
+    private var v6FriendsUnits: [V6SnapshotUnit] {
+        // Birthdays and other people-centric updates from the user's network.
+        [v6Units[3]]
+    }
+
+    private var v6SportsYouFollowUnits: [V6SnapshotUnit] {
+        // Sports + local-interest stories. Cassette appended last per request
+        // ("move the cassette player revival module to bottom of list").
+        [v6Units[4], v6Units[2], v6Units[5]]
+    }
+
     private func highlightsSection(proxy: ScrollViewProxy) -> some View {
-        // Highlights section with individual cards on gray background
         VStack(alignment: .leading, spacing: 0) {
-            // Section Header: "Highlights for you"
-            FDSUnitHeader(
-                headlineText: "Highlights for you",
-                hierarchyLevel: .level3
-            )
-            
-            // Individual highlight cards
-            VStack(spacing: 8) {
-                ForEach(highlightItems.indices, id: \.self) { index in
-                    highlightListItem(item: highlightItems[index], index: index, proxy: proxy)
-                }
-            }
-            .padding(.horizontal, 12)
-            .padding(.top, 8)
-            .padding(.bottom, 8)
+            sectionHeader("Picked for you")
+                .padding(.horizontal, 16)
+                .padding(.top, 16)
+                .padding(.bottom, 8)
+
+            heroMediaCard
+                .padding(.horizontal, 12)
+                .padding(.bottom, 8)
+
+            groupedHighlights(units: v6PickedForYouUnits)
+                .padding(.horizontal, 12)
+                .padding(.bottom, 24)
+
+            sectionHeader("Friends")
+                .padding(.horizontal, 16)
+                .padding(.bottom, 8)
+
+            groupedHighlights(units: v6FriendsUnits)
+                .padding(.horizontal, 12)
+                .padding(.bottom, 24)
+
+            sectionHeader("Sports you follow")
+                .padding(.horizontal, 16)
+                .padding(.bottom, 8)
+
+            groupedHighlights(units: v6SportsYouFollowUnits)
+                .padding(.horizontal, 12)
+                .padding(.bottom, 8)
         }
         .padding(.bottom, 140)
-        .background(Color("bottomSheetBackgroundDeemphasized"))  // Gray background F2F4F7
+        .background(Color("cardBackground"))
+    }
+
+    private func sectionHeader(_ title: String) -> some View {
+        Text(title)
+            .meta2Typography()
+            .textCase(.uppercase)
+            .tracking(0.5)
+            .foregroundStyle(Color("secondaryText"))
+            .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func groupedHighlights(units: [V6SnapshotUnit]) -> some View {
+        VStack(spacing: 0) {
+            ForEach(Array(units.enumerated()), id: \.element.id) { index, unit in
+                highlightRow(unit: unit, isLast: index == units.count - 1)
+            }
+        }
+        .background(Color("cardBackground"))
+        .cornerRadius(12)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color("mediaInnerBorder"), lineWidth: 0.5)
+        )
     }
     
     // MARK: - Footer Section
@@ -1374,54 +1323,61 @@ struct TodaysSnapshotLandingMVPv1: View {
         .contentShape(RoundedRectangle(cornerRadius: 12))
     }
     
-    // MARK: - Highlight List Item
-    
-    private func highlightListItem(item: HighlightItem, index: Int, proxy: ScrollViewProxy) -> some View {
-        let isHeavy = currentTextHierarchy == TextHierarchyVariant.heavy.rawValue
-        
-        return Button(action: {
-            isProgrammaticScroll = true
-            
-            withAnimation(.easeInOut(duration: 0.45)) {
-                proxy.scrollTo("snapshot-\(index + 1)", anchor: .top)
-            }
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                isProgrammaticScroll = false
-            }
+    // MARK: - Highlight Row (with thumbnail + hairline)
+
+    private func highlightRow(unit: V6SnapshotUnit, isLast: Bool) -> some View {
+        Button(action: {
+            selectedUnit = unit
         }) {
-            VStack(alignment: .leading, spacing: 10) {
-                Text("\(item.emoji) \(item.title)")
-                    .if(isHeavy) { $0.headline3EmphasizedTypography() }
-                    .if(!isHeavy) { $0.headline4Typography() }
-                    .foregroundColor(Color("primaryText"))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                
-                Text(item.body)
-                    .body3Typography()
-                    .foregroundColor(Color(isHeavy ? "secondaryText" : "primaryText"))
-                    .frame(maxWidth: .infinity, alignment: .leading)
+            VStack(spacing: 0) {
+                HStack(alignment: .top, spacing: 12) {
+                    Image(unit.image1)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 64, height: 64)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color("mediaInnerBorder"), lineWidth: 0.5)
+                        )
+
+                    VStack(alignment: .leading, spacing: 14) {
+                        Text(unit.title)
+                            .headline3EmphasizedTypography()
+                            .foregroundColor(Color("primaryText"))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+
+                        Text(unit.body)
+                            .body3Typography()
+                            .foregroundColor(Color("secondaryText"))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 16)
+
+                if !isLast {
+                    Rectangle()
+                        .fill(Color("mediaInnerBorder"))
+                        .frame(height: 0.5)
+                        .padding(.leading, 16 + 64 + 12)
+                }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 20)
             .contentShape(Rectangle())
         }
-        .background(Color("cardBackground"))
-        .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 2)
-        .buttonStyle(FDSPressedState(cornerRadius: 12))
+        .buttonStyle(FDSPressedState())
     }
     
     // MARK: - Helpers
     
     private func topicNameToSnapshotId(_ topicName: String) -> Int {
         switch topicName {
-        case "Pantone's Color of the Year": return 1
-        case "Jokic MVP race lead": return 2
-        case "Children Museum winter programs": return 3
-        case "High protein toddler snacks": return 4
-        case "Denver Restaurant Week": return 5
-        case "SpaceX Starship launch window": return 6
+        case "Snow finally comes to Colorado": return 1
+        case "Nothing Technologies unveils new headphones attracting tech nerds": return 2
+        case "Brooklyn's liminal night photography spots this April": return 3
+        case "Upcoming birthdays from your Facebook friends": return 4
+        case "Syracuse plays Saint Joseph's on March 18": return 5
+        case "Cassette player revival": return 6
         default: return selectedTopicId
         }
     }
@@ -1745,658 +1701,95 @@ struct TodaysSnapshotLandingMVPv1: View {
     
 }
 
-// MARK: - Secret Demo Menu
+// MARK: - Snapshot Unit Detail View (v6)
 
-struct SecretDemoMenu: View {
-    @Binding var currentMode: String
-    @AppStorage("snapshotShowOnboarding") private var currentOnboardingVariant: String = SnapshotOnboardingVariant.off.rawValue
-    @AppStorage("snapshotSearchVariant") private var currentSearchVariant: String = SnapshotSearchVariant.off.rawValue
-    @AppStorage("snapshotMediaCardVariant") private var currentMediaCardVariant: String = MediaCardVariant.whiteCard.rawValue
-    @AppStorage("snapshotExpandedFooter") private var currentFooterVariant: String = SnapshotFooterVariant.compact.rawValue
-    @AppStorage("snapshotTextHierarchy") private var currentTextHierarchy: String = TextHierarchyVariant.heavy.rawValue
+struct SnapshotUnitDetailV6: View {
+    let unit: V6SnapshotUnit
     @Environment(\.dismiss) private var dismiss
-    
-    private var isMVPv1: Bool {
-        currentMode == SnapshotDemoMode.mvpV1.rawValue
-    }
-    
-    private var isMediaCard: Bool {
-        currentMode == SnapshotDemoMode.v2MediaCard.rawValue
-    }
-    
-    private var otherModes: [SnapshotDemoMode] {
-        SnapshotDemoMode.allCases.filter { $0 != .mvpV1 }
-    }
-    
+
     var body: some View {
-        FDSBottomSheet(title: "Demo modes", contentStyle: .plain) {
-            VStack(spacing: 0) {
-                VStack(spacing: 0) {
-                    FDSListCell(
-                        headlineText: SnapshotDemoMode.mvpV1.rawValue,
-                        leftAddOn: .icon(SnapshotDemoMode.mvpV1.icon, iconSize: 24),
-                        rightAddOn: isMVPv1 ? .icon("checkmark-outline") : nil,
-                        showHairline: true,
-                        action: {
-                            currentMode = SnapshotDemoMode.mvpV1.rawValue
-                        }
-                    )
-                    
-                    demoMenuDropdownRow(
-                        label: "Onboarding",
-                        currentValue: $currentOnboardingVariant,
-                        options: SnapshotOnboardingVariant.allCases.map { $0.rawValue },
-                        isEnabled: isMVPv1
-                    )
-                    
-                    demoMenuDropdownRow(
-                        label: "Text hierarchy",
-                        currentValue: $currentTextHierarchy,
-                        options: TextHierarchyVariant.allCases.map { $0.rawValue },
-                        isEnabled: isMVPv1
-                    )
-                    
-                    demoMenuDropdownRow(
-                        label: "Search",
-                        currentValue: $currentSearchVariant,
-                        options: SnapshotSearchVariant.allCases.map { $0.rawValue },
-                        isEnabled: isMVPv1
-                    )
-                    
-                    demoMenuDropdownRow(
-                        label: "Footer",
-                        currentValue: $currentFooterVariant,
-                        options: SnapshotFooterVariant.allCases.map { $0.rawValue },
-                        isEnabled: isMVPv1,
-                        showHairline: false
-                    )
-                }
-                .background(Color("cardBackground"))
-                .cornerRadius(8)
-                
-                Spacer().frame(height: 12)
-                
-                VStack(spacing: 0) {
-                    ForEach(Array(otherModes.enumerated()), id: \.offset) { index, mode in
-                        FDSListCell(
-                            headlineText: mode.rawValue,
-                            leftAddOn: .icon(mode.icon, iconSize: 24),
-                            rightAddOn: currentMode == mode.rawValue ? .icon("checkmark-outline") : nil,
-                            showHairline: true,
-                            action: {
-                                currentMode = mode.rawValue
-                            }
-                        )
-                        
-                        if mode == .v2MediaCard {
-                            demoMenuDropdownRow(
-                                label: "Card style",
-                                currentValue: $currentMediaCardVariant,
-                                options: MediaCardVariant.allCases.map { $0.rawValue },
-                                isEnabled: isMediaCard
-                            )
-                        }
-                    }
-                }
-                .background(Color("cardBackground"))
-                .cornerRadius(8)
-            }
-            .padding(.bottom, 34)
-        }
-    }
-    
-    private func demoMenuDropdownRow(label: String, currentValue: Binding<String>, options: [String], isEnabled: Bool, showHairline: Bool = true) -> some View {
         VStack(spacing: 0) {
-            HStack {
-                Text(label)
-                    .body2Typography()
-                    .foregroundStyle(isEnabled ? Color("primaryText") : Color("disabledText"))
-                
-                Spacer()
-                
-                Menu {
-                    ForEach(options, id: \.self) { option in
-                        Button(action: {
-                            currentValue.wrappedValue = option
-                        }) {
-                            if currentValue.wrappedValue == option {
-                                Label(option, image: "checkmark-outline")
-                            } else {
-                                Text(option)
-                            }
+            FDSNavigationBarCentered(
+                title: "Today's snapshot",
+                backAction: { dismiss() }
+            )
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
+                    // Title
+                    Text(unit.title)
+                        .headline2EmphasizedTypography()
+                        .foregroundColor(Color("primaryText"))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 12)
+                        .padding(.top, 16)
+                        .padding(.bottom, 12)
+
+                    // Body
+                    Text(unit.body)
+                        .body3Typography()
+                        .foregroundColor(Color("primaryText"))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 12)
+                        .padding(.bottom, 20)
+
+                    // 2×2 media grid
+                    VStack(spacing: 8) {
+                        HStack(spacing: 8) {
+                            detailMediaCard(imageName: unit.image1, username: unit.usernames[0])
+                            detailMediaCard(imageName: unit.image2, username: unit.usernames[1])
+                        }
+                        HStack(spacing: 8) {
+                            detailMediaCard(imageName: unit.image3, username: unit.usernames[2])
+                            detailMediaCard(imageName: unit.image4, username: unit.usernames[3])
                         }
                     }
-                } label: {
-                    HStack(spacing: 4) {
-                        Text(currentValue.wrappedValue)
-                            .body2Typography()
-                            .foregroundStyle(isEnabled ? Color("secondaryText") : Color("disabledText"))
-                        
-                        VStack(spacing: 0) {
-                            Image("chevron-up-filled")
-                                .renderingMode(.template)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 10, height: 10)
-                            Image("chevron-down-filled")
-                                .renderingMode(.template)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 10, height: 10)
-                        }
-                        .foregroundStyle(isEnabled ? Color("secondaryIcon") : Color("disabledIcon"))
-                    }
-                }
-                .disabled(!isEnabled)
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 14)
-            
-            if showHairline {
-                Rectangle()
-                    .fill(Color("borderDeemphasized"))
-                    .frame(height: 0.5)
-                    .padding(.leading, 16)
-            }
-        }
-    }
-}
-
-// MARK: - Search Variant Menu
-
-struct SearchVariantMenu: View {
-    @Binding var currentVariant: String
-    @Environment(\.dismiss) private var dismiss
-    
-    var body: some View {
-        FDSBottomSheet(title: "Variants", contentStyle: .plain) {
-            VStack(spacing: 0) {
-                // Section label
-                HStack {
-                    Text("Search")
-                        .headline4EmphasizedTypography()
-                        .foregroundStyle(Color("primaryText"))
-                    Spacer()
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 16)
-                .padding(.bottom, 4)
-                
-                ForEach(SnapshotSearchVariant.allCases) { variant in
-                    let isSelected = currentVariant == variant.rawValue
-                    FDSListCell(
-                        headlineText: variant.rawValue,
-                        headlineEmphasis: isSelected ? .emphasized : .default,
-                        leftAddOn: .icon(
-                            "checkmark-outline",
-                            iconSize: 16,
-                            color: isSelected ? Color("primaryText") : Color.clear
-                        ),
-                        action: {
-                            currentVariant = variant.rawValue
-                            dismiss()
-                        }
-                    )
+                    .padding(.horizontal, 12)
+                    .padding(.bottom, 24)
                 }
             }
-            .padding(.bottom, 34)
             .background(Color("cardBackground"))
         }
+        .background(Color("cardBackground"))
+        .hideFDSTabBar(true)
+        .toolbar(.hidden, for: .navigationBar)
     }
-}
 
-// MARK: - Highlight Item Model
+    private func detailMediaCard(imageName: String, username: String) -> some View {
+        GeometryReader { geo in
+            ZStack(alignment: .topLeading) {
+                Image(imageName)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: geo.size.width, height: geo.size.height)
+                    .clipped()
 
-struct HighlightItem {
-    let emoji: String
-    let title: String
-    let body: String
-    let profileImage: String
-}
-
-// MARK: - Sample Data
-
-let highlightItems: [HighlightItem] = [
-    HighlightItem(
-        emoji: "🎨",
-        title: "Pantone Color of the Year",
-        body: "This year's selection signals a shift toward softer visual language across design culture.",
-        profileImage: "pantone_new_1"
-    ),
-    HighlightItem(
-        emoji: "🏀",
-        title: "Jokic MVP Race Lead",
-        body: "Despite missing recent games, the Denver center remains the benchmark for MVP.",
-        profileImage: "nba_1"
-    ),
-    HighlightItem(
-        emoji: "❄️",
-        title: "Children Museum Winter Programs",
-        body: "New programming is giving families more indoor options during Denver's colder months.",
-        profileImage: "WInterKids"
-    ),
-    HighlightItem(
-        emoji: "🍌",
-        title: "High-protein toddler snacks",
-        body: "Dietitians say small pantry upgrades can meaningfully boost protein intake for kids.",
-        profileImage: "toddler"
-    ),
-    HighlightItem(
-        emoji: "🍽️",
-        title: "Denver Restaurant Week",
-        body: "The annual dining event returns with expanded participation and citywide prix-fixe menus.",
-        profileImage: "DenverRestaruant"
-    ),
-    HighlightItem(
-        emoji: "🚀",
-        title: "SpaceX Starship launch window",
-        body: "The next test flight could open a 48-hour window as early as this week pending FAA clearance.",
-        profileImage: "image1"
-    )
-]
-
-// MARK: - Color Extension for Hex Support
-
-extension Color {
-    init(hex: String) {
-        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-        var int: UInt64 = 0
-        Scanner(string: hex).scanHexInt64(&int)
-        let a, r, g, b: UInt64
-        switch hex.count {
-        case 3: // RGB (12-bit)
-            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
-        case 6: // RGB (24-bit)
-            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
-        case 8: // ARGB (32-bit)
-            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
-        default:
-            (a, r, g, b) = (1, 1, 1, 0)
-        }
-
-        self.init(
-            .sRGB,
-            red: Double(r) / 255,
-            green: Double(g) / 255,
-            blue:  Double(b) / 255,
-            opacity: Double(a) / 255
-        )
-    }
-}
-
-// MARK: - Simple Video Player View
-
-struct SimpleVideoPlayerView: View {
-    let videoName: String
-    @Binding var isPresented: Bool
-    @State private var isPlaying = true
-    @State private var player: AVPlayer?
-    @State private var isLiked = false
-    @State private var likeCount = 342
-    @State private var isCaptionExpanded = false
-    
-    var body: some View {
-        ZStack {
-            // Video Player Base
-            ZStack {
-                ZStack {
-                    if let player = player {
-                        VideoPlayer(player: player)
-                            .ignoresSafeArea()
-                            .onAppear {
-                                player.play()
-                            }
-                            .onDisappear {
-                                player.pause()
-                            }
-                    }
-                    
-                    // Dim overlay when paused
-                    Color.black.opacity(isPlaying ? 0 : 0.3)
-                        .ignoresSafeArea()
-                        .allowsHitTesting(false)
-                        .animation(.linear(duration: 0.2), value: isPlaying)
-                }
-                
-                // Content Protection Gradient
-                VStack(spacing: 0) {
-                    Spacer()
-                    LinearGradient(
-                        stops: [
-                            .init(color: Color("overlayOnMediaLight").opacity(0.0), location: 0.0),
-                            .init(color: Color("overlayOnMediaLight").opacity(0.1), location: 0.2),
-                            .init(color: Color("overlayOnMediaLight").opacity(0.4), location: 0.5),
-                            .init(color: Color("overlayOnMediaLight").opacity(0.8), location: 0.8),
-                            .init(color: Color("overlayOnMediaLight").opacity(1.0), location: 1.0)
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .frame(height: 260)
-                    .allowsHitTesting(false)
-                }
-                .ignoresSafeArea(.all)
-            }
-            .onTapGesture {
-                withAnimation(.linear(duration: 0.2)) {
-                    isPlaying.toggle()
-                    if isPlaying {
-                        player?.play()
-                    } else {
-                        player?.pause()
-                    }
-                }
-            }
-            
-            // Back Button (Top Left)
-            VStack {
-                HStack {
-                    Button(action: {
-                        isPresented = false
-                    }) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 20, weight: .semibold))
-                            .foregroundColor(.white)
-                            .frame(width: 44, height: 44)
-                            .background(Color.black.opacity(0.3))
-                            .clipShape(Circle())
-                    }
-                    .padding(.leading, 16)
-                    .padding(.top, 60)
-                    
-                    Spacer()
-                }
-                Spacer()
-            }
-            
-            // Bottom UI Chrome
-            VStack {
-                Spacer()
-                
-                HStack(alignment: .bottom, spacing: 12) {
-                    // Left side: Profile + Caption
-                    VStack(alignment: .leading, spacing: 12) {
-                        // Profile Section
-                        HStack(alignment: .center, spacing: 8) {
-                            Image("pantone-1")
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 32, height: 32)
-                                .clipShape(Circle())
-                            
-                            VStack(alignment: .leading, spacing: 10) {
-                                HStack(alignment: .center, spacing: 4) {
-                                    Text("Becker Threads")
-                                        .headline4Typography()
-                                        .textOnMediaShadow()
-                                        .foregroundStyle(Color("primaryTextOnMedia"))
-                                    
-                                    Text("·")
-                                        .headline4Typography()
-                                        .textOnMediaShadow()
-                                        .foregroundStyle(Color("primaryTextOnMedia"))
-                                    
-                                    Button {
-                                    } label: {
-                                        Text("Follow")
-                                            .headline4Typography()
-                                            .textOnMediaShadow()
-                                            .foregroundStyle(Color("primaryTextOnMedia"))
-                                    }
-                                    .buttonStyle(FDSPressedState(
-                                        cornerRadius: 6,
-                                        isOnMedia: true,
-                                        padding: EdgeInsets(top: 8, leading: 4, bottom: 8, trailing: 4)
-                                    ))
-                                }
-                                
-                                // Music Info
-                                HStack(spacing: 4) {
-                                    Image("music-filled")
-                                        .resizable()
-                                        .frame(width: 12, height: 12)
-                                        .foregroundStyle(Color("secondaryIconOnMedia"))
-                                        .iconOnMediaShadow()
-                                    
-                                    Text("Original audio · Becker Threads")
-                                        .meta4Typography()
-                                        .textOnMediaShadow()
-                                        .foregroundStyle(Color("secondaryTextOnMedia"))
-                                        .lineLimit(1)
-                                }
-                            }
-                            Spacer()
-                        }
-                        
-                        // Caption
-                        Text("Cloud Dancer by Pantone - the 2026 Color of the Year 🎨")
-                            .body3Typography()
-                            .textOnMediaShadow()
-                            .foregroundStyle(Color("primaryTextOnMedia"))
-                            .lineLimit(isCaptionExpanded ? nil : 1)
-                            .truncationMode(.tail)
-                            .animation(.linear(duration: 0.2), value: isCaptionExpanded)
-                            .highPriorityGesture(
-                                TapGesture()
-                                    .onEnded { _ in
-                                        isCaptionExpanded.toggle()
-                                    }
-                            )
-                    }
-                    
-                    // Right side: Vertical UFI Buttons
-                    VStack(spacing: 0) {
-                        ReelUFIButton(
-                            icon: "like-outline",
-                            likedIcon: "like",
-                            count: likeCount.formattedString,
-                            isLiked: $isLiked,
-                            likeCount: $likeCount
-                        )
-                        ReelUFIButton(icon: "comment-outline", count: "127")
-                        ReelUFIButton(icon: "share-outline", count: "42")
-                        ReelUFIButton(icon: "bookmark-outline", count: "Save")
-                        ReelUFIButton(icon: "dots-3-horizontal-outline", count: nil)
-                    }
-                }
-                .padding(.leading, 12)
-                .padding(.bottom, 12)
-            }
-            
-            // Play/Pause Controls (centered)
-            if !isPlaying {
-                VStack {
-                    Spacer()
-                    HStack(spacing: 16) {
-                        Button {
-                            // Skip backward 10 seconds
-                            if let player = player {
-                                let currentTime = player.currentTime()
-                                let newTime = CMTimeSubtract(currentTime, CMTime(seconds: 10, preferredTimescale: 1))
-                                player.seek(to: newTime)
-                                player.play()
-                                isPlaying = true
-                            }
-                        } label: {
-                            Image("skip-backward-10-filled")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 24, height: 24)
-                                .foregroundStyle(Color("secondaryButtonIconOnMedia"))
-                                .frame(width: 40, height: 40)
-                                .background {
-                                    Circle()
-                                        .fill(.thinMaterial)
-                                        .colorScheme(.dark)
-                                }
-                        }
-                        .buttonStyle(FDSPressedState(circle: true, isOnMedia: true, scale: .small))
-                        
-                        Button {
-                            isPlaying = true
-                            player?.play()
-                        } label: {
-                            Image("play-filled")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 24, height: 24)
-                                .foregroundStyle(Color("secondaryButtonIconOnMedia"))
-                                .frame(width: 60, height: 60)
-                                .background {
-                                    Circle()
-                                        .fill(.thinMaterial)
-                                        .colorScheme(.dark)
-                                }
-                        }
-                        .buttonStyle(FDSPressedState(circle: true, isOnMedia: true, scale: .small))
-
-                        Button {
-                            // Skip forward 10 seconds
-                            if let player = player {
-                                let currentTime = player.currentTime()
-                                let newTime = CMTimeAdd(currentTime, CMTime(seconds: 10, preferredTimescale: 1))
-                                player.seek(to: newTime)
-                                player.play()
-                                isPlaying = true
-                            }
-                        } label: {
-                            Image("skip-forward-10-filled")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 24, height: 24)
-                                .foregroundStyle(Color("secondaryButtonIconOnMedia"))
-                                .frame(width: 40, height: 40)
-                                .background {
-                                    Circle()
-                                        .fill(.thinMaterial)
-                                        .colorScheme(.dark)
-                                }
-                        }
-                        .buttonStyle(FDSPressedState(circle: true, isOnMedia: true, scale: .small))
-                    }
-                    Spacer()
-                }
-            }
-        }
-        .onAppear {
-            setupPlayer()
-        }
-    }
-    
-    private func setupPlayer() {
-        // Try to load the video from the bundle
-        if let bundleURL = Bundle.main.url(forResource: videoName, withExtension: "mp4") {
-            player = AVPlayer(url: bundleURL)
-            
-            // Mute the player
-            player?.isMuted = true
-        } else {
-            // If video doesn't exist, create a blank player
-            print("Video not found: \(videoName).mp4")
-            player = AVPlayer()
-        }
-        
-        // Setup looping
-        NotificationCenter.default.addObserver(
-            forName: .AVPlayerItemDidPlayToEndTime,
-            object: player?.currentItem,
-            queue: .main
-        ) { _ in
-            player?.seek(to: .zero)
-            player?.play()
-        }
-    }
-}
-
-// MARK: - Reel UFI Button
-
-struct ReelUFIButton: View {
-    private enum ButtonType {
-        case action(icon: String, count: String?, action: () -> Void)
-        case like(icon: String, likedIcon: String, isLiked: Binding<Bool>, likeCount: Binding<Int>)
-    }
-    
-    private let buttonType: ButtonType
-    @State private var isPressed = false
-    
-    init(icon: String, count: String? = nil, action: @escaping () -> Void = {}) {
-        self.buttonType = .action(icon: icon, count: count, action: action)
-    }
-    
-    init(icon: String, likedIcon: String, count: String, isLiked: Binding<Bool>, likeCount: Binding<Int>) {
-        self.buttonType = .like(icon: icon, likedIcon: likedIcon, isLiked: isLiked, likeCount: likeCount)
-    }
-    
-    var body: some View {
-        Button {
-            switch buttonType {
-            case .action(_, _, let action):
-                action()
-            case .like(_, _, let isLiked, let likeCount):
-                withAnimation {
-                    isLiked.wrappedValue.toggle()
-                    likeCount.wrappedValue += isLiked.wrappedValue ? 1 : -1
-                }
-            }
-        } label: {
-            VStack(spacing: 8) {
-                switch buttonType {
-                case .action(let icon, let count, _):
-                    Image(icon)
-                        .renderingMode(.template)
+                HStack(spacing: 8) {
+                    Image(imageName)
                         .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 24, height: 24)
-                        .foregroundStyle(Color("primaryIconOnMedia"))
-                        .iconOnMediaShadow()
-                    
-                    if let count = count {
-                        Text(count)
-                            .meta4LinkTypography()
-                            .foregroundStyle(Color("primaryTextOnMedia"))
-                            .textOnMediaShadow()
-                    }
-                    
-                case .like(let icon, let likedIcon, let isLiked, let likeCount):
-                    let currentIcon = isLiked.wrappedValue ? likedIcon : icon
-                    
-                    Image(currentIcon)
-                        .renderingMode(isLiked.wrappedValue ? .original : .template)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 24, height: 24)
-                        .foregroundStyle(isLiked.wrappedValue ? Color.clear : Color("primaryIconOnMedia"))
-                        .scaleEffect(isLiked.wrappedValue ? 1.2 : 1.0)
-                        .iconOnMediaShadow()
-                    
-                    Text(likeCount.wrappedValue.formattedString)
-                        .meta4LinkTypography()
-                        .foregroundStyle(Color("primaryTextOnMedia"))
-                        .textOnMediaShadow()
+                        .scaledToFill()
+                        .frame(width: 20, height: 20)
+                        .clipShape(Circle())
+
+                    Text(username)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(.white)
+                        .shadow(color: Color.black.opacity(0.3), radius: 2, x: 0, y: 1)
+
+                    Spacer()
                 }
+                .padding(12)
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color("mediaPressed"))
-                    .frame(maxWidth: 48)
-                    .opacity(isPressed ? 1.0 : 0.0)
-            )
+            .frame(width: geo.size.width, height: geo.size.height)
+            .cornerRadius(12)
+            .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color("borderUiEmphasis"), lineWidth: 1))
+            .clipped()
         }
-        .buttonStyle(.plain)
-        .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
-            withAnimation {
-                isPressed = pressing
-            }
-        }, perform: {})
+        .aspectRatio(172 / 259.571, contentMode: .fit)
+        .contentShape(RoundedRectangle(cornerRadius: 12))
     }
 }
 
 #Preview {
-    NavigationStack {
-        TodaysSnapshotLandingMVPv1()
-    }
+    TodaysSnapshotLandingV6()
 }
-
-// NOTE: cornerRadius(_:corners:) and RoundedCorner are defined in MessagingLightweightThreadView.swift

@@ -117,7 +117,9 @@ struct ContentView: View {
                 showTodaysSnapshot = false
             }
         }
-        if currentDemoMode == SnapshotDemoMode.v5.rawValue {
+        if currentDemoMode == SnapshotDemoMode.v6.rawValue {
+            TodaysSnapshotLandingV6(onBack: backAction)
+        } else if currentDemoMode == SnapshotDemoMode.v5.rawValue {
             TodaysSnapshotLandingV5(onBack: backAction)
         } else {
             TodaysSnapshotLandingMVPv1(onBack: backAction)
