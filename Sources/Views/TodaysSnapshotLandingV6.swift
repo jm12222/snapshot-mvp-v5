@@ -1887,40 +1887,73 @@ struct SnapshotUnitDetailV6: View {
     }
 
     // Persistent floating "Ask anything" composer pinned to the bottom of the
-    // detail page. Uses safeAreaInset so the ScrollView reserves space for it
-    // and content above never gets clipped. Whole pill is one tap target — the
-    // trailing circular icon is a visual affordance, not a separate button.
+    // detail page. Spec mirrors the Figma "Floating bottom composer" frame
+    // (file dPCTtNCUVZX7Vh21x8iRDB, node 284:22264):
+    //   • Outer 88pt frame with 16pt padding all around
+    //   • Vertical white gradient overlay (0 → 0.64 @ 30% → 0.92) that
+    //     touches the bottom edge of the screen
+    //   • 56pt pill, cornerRadius 28, regularMaterial blur with cardBackground
+    //     tint, FDS responsiveUIShadow for the floating elevation
+    //   • body2 (17pt) "Ask anything" placeholder in placeholderTextDefault
+    //   • Trailing 36pt secondaryButtonBackgroundFloating circle with an 18pt
+    //     gen-ai-magnifying-glass-outline icon
+    // Whole pill is one tap target — the icon circle is a visual affordance.
     private var floatingAskComposer: some View {
         Button(action: {}) {
             HStack(spacing: 8) {
                 Text("Ask anything")
-                    .body3Typography()
-                    .foregroundColor(Color("secondaryText"))
+                    .body2Typography()
+                    .foregroundColor(Color("placeholderTextDefault"))
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 ZStack {
                     Circle()
-                        .fill(Color("webWash"))
+                        .fill(Color("secondaryButtonBackgroundFloating"))
                         .frame(width: 36, height: 36)
                     Image("gen-ai-magnifying-glass-outline")
                         .resizable()
                         .renderingMode(.template)
                         .scaledToFit()
-                        .frame(width: 20, height: 20)
+                        .frame(width: 18, height: 18)
                         .foregroundStyle(Color("primaryIcon"))
                 }
             }
             .padding(.leading, 20)
-            .padding(.trailing, 8)
-            .padding(.vertical, 8)
+            .padding(.trailing, 4)
+            .frame(height: 56)
             .frame(maxWidth: .infinity)
-            .background(Color("cardBackground"))
+            .background(
+                RoundedRectangle(cornerRadius: 28)
+                    .fill(.regularMaterial)
+            )
+            .background(
+                // Subtle white tint over the material so it reads white on
+                // light surfaces (matches the 76% white fill in Figma).
+                RoundedRectangle(cornerRadius: 28)
+                    .fill(Color("cardBackground").opacity(0.4))
+            )
             .clipShape(RoundedRectangle(cornerRadius: 28))
         }
         .buttonStyle(FDSPressedState(cornerRadius: 28))
         .responsiveUIShadow(cornerRadius: 28)
-        .padding(.horizontal, 12)
-        .padding(.bottom, 12)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 16)
+        .background(alignment: .bottom) {
+            // Gradient overlay from the Figma "Floating bottom composer"
+            // outer frame. Extended past the safe area to reach the bottom
+            // edge of the screen so it visually fades the content under the
+            // composer right up to the device chin.
+            LinearGradient(
+                stops: [
+                    .init(color: Color("cardBackground").opacity(0.0), location: 0.0),
+                    .init(color: Color("cardBackground").opacity(0.64), location: 0.30),
+                    .init(color: Color("cardBackground").opacity(0.92), location: 1.0)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea(edges: .bottom)
+        }
     }
 
     private func detailMediaCard(imageName: String, username: String) -> some View {
