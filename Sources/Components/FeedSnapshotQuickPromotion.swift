@@ -51,7 +51,7 @@ struct FeedSnapshotQuickPromotion: View {
             }
             .padding(.horizontal, 12)
             .padding(.top, 4)
-            .padding(.bottom, 12)
+            .padding(.bottom, 20) // tuned: 12 → 20 (+8pt below body before CTA)
 
             FDSButton(
                 type: .primary,
@@ -75,11 +75,15 @@ struct FeedSnapshotQuickPromotion: View {
 
     private var promotionHeader: some View {
         HStack(spacing: 8) {
+            // FB brand mark — asset is a template glyph, so we tint it with
+            // the FDS accentColor (Facebook brand blue) instead of relying on
+            // the asset's intrinsic fill.
             Image("app-facebook-circle-filled")
                 .resizable()
-                .renderingMode(.original)
+                .renderingMode(.template)
                 .scaledToFit()
                 .frame(width: 24, height: 24)
+                .foregroundStyle(Color("accentColor"))
 
             Spacer()
 
@@ -96,14 +100,18 @@ struct FeedSnapshotQuickPromotion: View {
 
     private var keyartMedia: some View {
         // Keyart is provided as a single PNG of three tilted snapshot cards
-        // on a transparent background. We center it inside a fixed-height
-        // band so the QP stays a predictable size regardless of device width.
-        Image("feed-qp-snapshot-keyart")
-            .resizable()
-            .scaledToFit()
-            .frame(height: 160)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 4)
+        // on a transparent background. Sized at a fixed 145pt width so it
+        // reads as a quiet visual grace note rather than a hero image, then
+        // centered horizontally in the QP card.
+        HStack {
+            Spacer(minLength: 0)
+            Image("feed-qp-snapshot-keyart")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 145) // tuned: ~160h fill → 145w (smaller visual)
+            Spacer(minLength: 0)
+        }
+        .padding(.vertical, 4)
     }
 }
 
