@@ -1741,7 +1741,7 @@ struct SnapshotUnitDetailV6: View {
                 VStack(alignment: .leading, spacing: 0) {
                     // Title
                     Text(unit.title)
-                        .headline2EmphasizedTypography()
+                        .headline3EmphasizedTypography() // tuned: headline2Emphasized → headline3Emphasized (17pt bold)
                         .foregroundColor(Color("primaryText"))
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, 12)
