@@ -1928,7 +1928,7 @@ struct SnapshotUnitDetailV6: View {
                         .resizable()
                         .renderingMode(.template)
                         .scaledToFit()
-                        .frame(width: 24, height: 24) // tuned: 18 → 24
+                        .frame(width: 20, height: 20) // tuned: 24 → 20 (one FDS size down)
                         .foregroundStyle(Color("secondaryIcon")) // tuned: primaryIcon → secondaryIcon
                 }
             }
@@ -1973,6 +1973,8 @@ struct SnapshotUnitDetailV6: View {
             .ignoresSafeArea(edges: .bottom)
         }
         .ignoresSafeArea(.container, edges: .bottom)
+        .offset(y: 24) // move the whole composer unit 24pt further down
+                       // toward the physical screen bottom (per design spec)
     }
 
     private func detailMediaCard(imageName: String, username: String) -> some View {
