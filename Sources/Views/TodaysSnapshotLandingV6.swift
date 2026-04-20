@@ -1831,8 +1831,11 @@ struct SnapshotUnitDetailV6: View {
                     .padding(.bottom, 16)
                     .v6EntranceAnimation(visible: entranceVisible, delay: 0.06)
 
-                    // Share + Sources sub-pills (share moved here from header)
-                    HStack(spacing: 8) { // 8pt gap between share + sources
+                    // Share + Sources sub-pills (share moved here from header).
+                    // 4pt gap between the two pills + a local hairline override
+                    // that's slightly darker than the default borderUiEmphasis so
+                    // the buttons read with a touch more weight on this surface.
+                    HStack(spacing: 4) { // tuned: 8 → 4
                         FDSActionChip(
                             size: .small,
                             label: "",
@@ -1840,11 +1843,19 @@ struct SnapshotUnitDetailV6: View {
                             isMenu: false,
                             action: {}
                         )
+                        .overlay(
+                            Capsule()
+                                .stroke(Color("primaryText").opacity(0.14), lineWidth: 1)
+                        )
                         FDSActionChip(
                             size: .small,
                             label: "Sources",
                             isMenu: false,
                             action: {}
+                        )
+                        .overlay(
+                            Capsule()
+                                .stroke(Color("primaryText").opacity(0.14), lineWidth: 1)
                         )
                         Spacer()
                     }
