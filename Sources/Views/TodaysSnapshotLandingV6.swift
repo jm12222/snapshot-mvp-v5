@@ -1803,7 +1803,7 @@ struct SnapshotUnitDetailV6: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, 12)
                         .padding(.top, 16)
-                        .padding(.bottom, 12)
+                        .padding(.bottom, 16) // tuned: 12 → 16 (+4pt below title)
                         .v6EntranceAnimation(visible: entranceVisible, delay: 0.00)
 
                     // Thesis + sub-bullets (formatting copied from MVPv1 snapshotUnit:
