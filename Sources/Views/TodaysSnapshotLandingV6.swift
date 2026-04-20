@@ -48,6 +48,8 @@ struct TodaysSnapshotLandingV6: View {
     @State private var feedbackToastUnitId: Int? = nil
     @State private var selectedPivotQuery: String? = nil
     @State private var selectedUnit: V6SnapshotUnit? = nil
+    // Drives the subtle staggered entrance animation on first appear.
+    @State private var entranceVisible = false
 
     // DEBUG: Toggle this to show/hide scroll position indicator
     private let showScrollDebug = false
@@ -68,6 +70,14 @@ struct TodaysSnapshotLandingV6: View {
         ScrollViewReader { proxy in
             mainScrollContent(proxy: proxy)
                 .navigationBarHidden(true)
+                .onAppear {
+                    // Tiny dispatch ensures the modifier's animation(value:)
+                    // observer is wired up before the state flips, so the
+                    // first transition actually animates instead of snapping.
+                    DispatchQueue.main.async {
+                        entranceVisible = true
+                    }
+                }
                 .onChange(of: footerStarRating) { oldValue, newValue in
                     if oldValue == 0 && newValue > 0 {
                         showRatingToast = true
@@ -606,46 +616,64 @@ struct TodaysSnapshotLandingV6: View {
     }
 
     private func highlightsSection(proxy: ScrollViewProxy) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
+        // Per-section entrance delays (seconds). Tuned so the cascade reads
+        // as "settling into place" without crossing into a slow reveal —
+        // total runway ≈ 0.24s + the passiveMoveIn duration (mediumIn = 0.4s).
+        let heroDelay: Double = 0.00
+        let pickedDelay: Double = 0.06
+        let friendsDelay: Double = 0.12
+        let sportsDelay: Double = 0.18
+        let localDelay: Double = 0.24
+
+        return VStack(alignment: .leading, spacing: 0) {
             sectionHeader("Picked for you")
                 .padding(.horizontal, 16)
                 .padding(.top, 5) // tuned: 4 → 5 (+1 above all section headers)
                 .padding(.bottom, 9) // tuned: 12 → 9 (-3 below all section headers)
+                .v6EntranceAnimation(visible: entranceVisible, delay: heroDelay)
 
             heroMediaCard
                 .padding(.horizontal, 12)
                 .padding(.bottom, 8)
+                .v6EntranceAnimation(visible: entranceVisible, delay: heroDelay)
 
             groupedHighlights(units: v6PickedForYouUnits)
                 .padding(.horizontal, 12)
                 .padding(.bottom, 16) // 12 + 4 above next section header
+                .v6EntranceAnimation(visible: entranceVisible, delay: pickedDelay)
 
             sectionHeader("Friends")
                 .padding(.horizontal, 16)
                 .padding(.top, 1) // tuned: +1 above all section headers
                 .padding(.bottom, 9) // tuned: 12 → 9 (-3 below all section headers)
+                .v6EntranceAnimation(visible: entranceVisible, delay: friendsDelay)
 
             groupedHighlights(units: v6FriendsUnits)
                 .padding(.horizontal, 12)
                 .padding(.bottom, 16) // 12 + 4 above next section header
+                .v6EntranceAnimation(visible: entranceVisible, delay: friendsDelay)
 
             sectionHeader("Sports you follow")
                 .padding(.horizontal, 16)
                 .padding(.top, 1) // tuned: +1 above all section headers
                 .padding(.bottom, 9) // tuned: 12 → 9 (-3 below all section headers)
+                .v6EntranceAnimation(visible: entranceVisible, delay: sportsDelay)
 
             groupedHighlights(units: v6SportsYouFollowUnits)
                 .padding(.horizontal, 12)
                 .padding(.bottom, 16) // 12 + 4 above next section header
+                .v6EntranceAnimation(visible: entranceVisible, delay: sportsDelay)
 
             sectionHeader("Local")
                 .padding(.horizontal, 16)
                 .padding(.top, 1) // tuned: +1 above all section headers
                 .padding(.bottom, 9) // tuned: 12 → 9 (-3 below all section headers)
+                .v6EntranceAnimation(visible: entranceVisible, delay: localDelay)
 
             groupedHighlights(units: v6LocalUnits)
                 .padding(.horizontal, 12)
                 .padding(.bottom, 8)
+                .v6EntranceAnimation(visible: entranceVisible, delay: localDelay)
         }
         .padding(.bottom, 140)
         .background(Color("bottomSheetBackgroundDeemphasized"))
@@ -1715,6 +1743,8 @@ struct TodaysSnapshotLandingV6: View {
 // MARK: - Snapshot Unit Detail View (v6)
 
 struct SnapshotUnitDetailV6: View {
+    @State private var entranceVisible = false
+
     let unit: V6SnapshotUnit
     @Environment(\.dismiss) private var dismiss
 
@@ -1771,6 +1801,7 @@ struct SnapshotUnitDetailV6: View {
                         .padding(.horizontal, 12)
                         .padding(.top, 16)
                         .padding(.bottom, 12)
+                        .v6EntranceAnimation(visible: entranceVisible, delay: 0.00)
 
                     // Thesis + sub-bullets (formatting copied from MVPv1 snapshotUnit:
                     // single VStack(spacing: 12), .top-aligned HStack(spacing: 8))
@@ -1795,6 +1826,7 @@ struct SnapshotUnitDetailV6: View {
                     }
                     .padding(.horizontal, 12)
                     .padding(.bottom, 16)
+                    .v6EntranceAnimation(visible: entranceVisible, delay: 0.06)
 
                     // Share + Sources sub-pills (share moved here from header)
                     HStack(spacing: 8) {
@@ -1815,6 +1847,7 @@ struct SnapshotUnitDetailV6: View {
                     }
                     .padding(.horizontal, 12)
                     .padding(.bottom, 20)
+                    .v6EntranceAnimation(visible: entranceVisible, delay: 0.12)
 
                     // 2×2 media grid
                     VStack(spacing: 8) {
@@ -1829,16 +1862,25 @@ struct SnapshotUnitDetailV6: View {
                     }
                     .padding(.horizontal, 12)
                     .padding(.bottom, 24)
+                    .v6EntranceAnimation(visible: entranceVisible, delay: 0.18)
                 }
             }
             .background(Color("cardBackground"))
             .safeAreaInset(edge: .bottom, spacing: 0) {
                 floatingAskComposer
+                    // Composer rises in last from a slightly larger travel
+                    // distance so it reads as "docking" at the bottom.
+                    .v6EntranceAnimation(visible: entranceVisible, delay: 0.24, travel: 16)
             }
         }
         .background(Color("cardBackground"))
         .hideFDSTabBar(true)
         .toolbar(.hidden, for: .navigationBar)
+        .onAppear {
+            DispatchQueue.main.async {
+                entranceVisible = true
+            }
+        }
     }
 
     // Persistent floating "Ask anything" composer pinned to the bottom of the
@@ -2019,6 +2061,34 @@ struct WordTruncatedBody: View {
             }
         }
         return lastFitting.isEmpty ? text : lastFitting
+    }
+}
+
+// MARK: - Subtle Entrance Animation
+// Used on first appear so v6 sections "settle into place" rather than
+// popping. Pure FDS motion: passiveMoveIn (the quietest entrance curve in
+// Motion.swift) over MotionDuration.mediumIn, paired with a small 8pt
+// upward rise + opacity. Per-block delays let blocks cascade in.
+private struct EntranceAnimationModifier: ViewModifier {
+    let isVisible: Bool
+    let delay: Double
+    var travel: CGFloat = 8
+
+    func body(content: Content) -> some View {
+        content
+            .opacity(isVisible ? 1 : 0)
+            .offset(y: isVisible ? 0 : travel)
+            .animation(.passiveMoveIn(MotionDuration.mediumIn).delay(delay), value: isVisible)
+    }
+}
+
+extension View {
+    fileprivate func v6EntranceAnimation(
+        visible: Bool,
+        delay: Double = 0,
+        travel: CGFloat = 8
+    ) -> some View {
+        modifier(EntranceAnimationModifier(isVisible: visible, delay: delay, travel: travel))
     }
 }
 
