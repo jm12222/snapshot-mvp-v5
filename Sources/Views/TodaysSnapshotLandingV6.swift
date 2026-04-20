@@ -1719,13 +1719,39 @@ struct SnapshotUnitDetailV6: View {
     @Environment(\.dismiss) private var dismiss
 
     // Made-up sub-bullets that expand on the thesis sentence.
-    private var detailBullets: [String] {
+    // Each bullet is paired with an optional link substring that gets rendered
+    // in accentColor body3Link typography to indicate where a tap would jump
+    // out to the original source video.
+    private var detailBullets: [(body: String, linkText: String?)] {
         [
-            "Forecasters are calling for 18 to 24 inches of new snow above 9,000 feet between Friday night and Sunday morning.",
-            "Heaviest accumulation is expected along the I-70 corridor, with several previously-closed lifts reopening in time for the weekend.",
-            "Mountain towns have issued winter parking advisories; chains may be required on Loveland and Vail Pass after midnight Friday.",
-            "Lift tickets are tracking 12% cheaper than the same weekend last year, and lodging availability is unusually strong for late-season powder."
+            (body: "Forecasters are calling for 18 to 24 inches of new snow above 9,000 feet between Friday night and Sunday morning.", linkText: "Forecasters"),
+            (body: "Heaviest accumulation is expected along the I-70 corridor, with several previously-closed lifts reopening in time for the weekend.", linkText: nil),
+            (body: "Mountain towns have issued winter parking advisories; chains may be required on Loveland and Vail Pass after midnight Friday.", linkText: "Loveland and Vail Pass"),
+            (body: "Lift tickets are tracking 12% cheaper than the same weekend last year, and lodging availability is unusually strong for late-season powder.", linkText: "12% cheaper")
         ]
+    }
+
+    // Inline-link helper: returns body3 text with an optional substring styled
+    // as a body3Link in accentColor (single contiguous match).
+    @ViewBuilder
+    private func linkifiedBody(_ text: String, linkText: String?) -> some View {
+        if let link = linkText, let range = text.range(of: link) {
+            let prefix = String(text[..<range.lowerBound])
+            let suffix = String(text[range.upperBound...])
+            (Text(prefix)
+                .foregroundColor(Color("primaryText"))
+             + Text(link)
+                .font(.body3Link)
+                .foregroundColor(Color("accentColor"))
+             + Text(suffix)
+                .foregroundColor(Color("primaryText"))
+            )
+            .body3Typography()
+        } else {
+            Text(text)
+                .body3Typography()
+                .foregroundColor(Color("primaryText"))
+        }
     }
 
     var body: some View {
@@ -1749,21 +1775,19 @@ struct SnapshotUnitDetailV6: View {
                     // Thesis + sub-bullets (formatting copied from MVPv1 snapshotUnit:
                     // single VStack(spacing: 12), .top-aligned HStack(spacing: 8))
                     VStack(alignment: .leading, spacing: 12) {
-                        Text(unit.body)
-                            .body3Typography()
-                            .foregroundColor(Color("primaryText"))
+                        // Thesis with one inline accent link pointing to the
+                        // original source video (e.g. "ski resorts" snippet).
+                        linkifiedBody(unit.body, linkText: "ski resorts")
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.vertical, 4) // +4 above and below the thesis sentence
 
                         VStack(alignment: .leading, spacing: 12) {
-                            ForEach(detailBullets, id: \.self) { bullet in
+                            ForEach(Array(detailBullets.enumerated()), id: \.offset) { _, bullet in
                                 HStack(alignment: .top, spacing: 8) {
                                     Text("•")
                                         .body3Typography()
                                         .foregroundColor(Color("primaryText"))
-                                    Text(bullet)
-                                        .body3Typography()
-                                        .foregroundColor(Color("primaryText"))
+                                    linkifiedBody(bullet.body, linkText: bullet.linkText)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                 }
                             }
