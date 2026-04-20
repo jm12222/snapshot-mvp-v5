@@ -108,7 +108,7 @@ struct FeedSnapshotQuickPromotion: View {
             Image("feed-qp-snapshot-keyart")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 145) // tuned: ~160h fill → 145w (smaller visual)
+                .frame(width: 138) // tuned: 145 → 138 (95% — slightly smaller fanned cards)
             Spacer(minLength: 0)
         }
         .padding(.vertical, 4)
