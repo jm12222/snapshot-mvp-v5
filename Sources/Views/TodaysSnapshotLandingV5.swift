@@ -245,8 +245,8 @@ struct TodaysSnapshotLandingV5: View {
             bodyText: "There's snow coming to Colorado! Here's a rundown of which ski resorts you should hit this weekend. Best prices and smallest crowds.",
             image1: "ski-colorado",
             image2: "snow-colorado",
-            image3: "ski-colorado",
-            image4: "snow-colorado",
+            image3: "blizzard",
+            image4: "ski-colorado",
             usernames: ["Colorado Ski Authority", "Mountain Report", "Powder Alert", "Resort Guide"],
             proxy: proxy
         )
@@ -259,9 +259,9 @@ struct TodaysSnapshotLandingV5: View {
             title: "Nothing Technologies unveils new headphones attracting tech nerds",
             bodyText: "New earphone and camera are launched by Nothing Technologies that you are interested in.",
             image1: "headphones",
-            image2: "headphones",
+            image2: "nothing-headphones",
             image3: "headphones",
-            image4: "headphones",
+            image4: "nothing-headphones",
             usernames: ["The Verge", "Tech Insider", "Wired", "Engadget"],
             proxy: proxy
         )
@@ -274,9 +274,9 @@ struct TodaysSnapshotLandingV5: View {
             title: "Brooklyn's liminal night photography spots this April",
             bodyText: "Brooklyn is known for its vibrant nightlife and unique photo opportunities. The best options are always hidden.",
             image1: "brooklyn-photo",
-            image2: "brooklyn-photo",
+            image2: "la-cinema",
             image3: "brooklyn-photo",
-            image4: "brooklyn-photo",
+            image4: "la-cinema",
             usernames: ["Brooklyn Magazine", "NYC Photo", "Street Lens", "Urban Frame"],
             proxy: proxy
         )
@@ -289,8 +289,8 @@ struct TodaysSnapshotLandingV5: View {
             title: "Upcoming birthdays from your Facebook friends",
             bodyText: "Frederic, Anna and Shelly are having their birthday this week.",
             image1: "birthday",
-            image2: "birthday",
-            image3: "birthday",
+            image2: "children-museum-winter",
+            image3: "pantone-color-year",
             image4: "birthday",
             usernames: ["Frederic", "Anna", "Shelly", "Friends"],
             proxy: proxy
@@ -303,10 +303,10 @@ struct TodaysSnapshotLandingV5: View {
             unitId: 5,
             title: "Syracuse plays Saint Joseph's on March 18",
             bodyText: "Brandon Marcus, Amelia Santos and 20 others are celebrating their birthdays. Plan for their special day!",
-            image1: "nba_1",
-            image2: "nba_2",
-            image3: "nba_3",
-            image4: "nba_4",
+            image1: "syracuse",
+            image2: "lakers-basketball",
+            image3: "syracuse",
+            image4: "lakers-basketball",
             usernames: ["Syracuse Athletics", "CBS Sports", "ESPN", "March Madness"],
             proxy: proxy
         )
@@ -602,10 +602,10 @@ struct TodaysSnapshotLandingV5: View {
     private var v5HighlightItems: [HighlightItem] {
         [
             HighlightItem(emoji: "", title: "Snow finally comes to Colorado",                               body: "There's snow coming to Colorado! Here's a rundown of which ski resorts you should hit this weekend.", profileImage: "ski-colorado"),
-            HighlightItem(emoji: "", title: "Nothing Technologies unveils new headphones",                  body: "New earphone and camera are launched by Nothing Technologies that you are interested in.",           profileImage: "headphones"),
+            HighlightItem(emoji: "", title: "Nothing Technologies unveils new headphones",                  body: "New earphone and camera are launched by Nothing Technologies that you are interested in.",           profileImage: "nothing-headphones"),
             HighlightItem(emoji: "", title: "Brooklyn's liminal night photography spots this April",        body: "Brooklyn is known for its vibrant nightlife and unique photo opportunities.",                        profileImage: "brooklyn-photo"),
             HighlightItem(emoji: "", title: "Upcoming birthdays from your Facebook friends",               body: "Frederic, Anna and Shelly are having their birthday this week.",                                     profileImage: "birthday"),
-            HighlightItem(emoji: "", title: "Syracuse plays Saint Joseph's on March 18",                   body: "Brandon Marcus, Amelia Santos and 20 others are celebrating their birthdays.",                      profileImage: "nba_1"),
+            HighlightItem(emoji: "", title: "Syracuse plays Saint Joseph's on March 18",                   body: "Brandon Marcus, Amelia Santos and 20 others are celebrating their birthdays.",                      profileImage: "syracuse"),
             HighlightItem(emoji: "", title: "Cassette player revival",                                     body: "Modern cassette players like the FiiO CP26 are sparking a retro tech revival.",                    profileImage: "casette-fiio"),
         ]
     }
