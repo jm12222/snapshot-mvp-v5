@@ -52,19 +52,15 @@ struct ContentView: View {
     @State private var showPrototypeSettings = false
     @State private var showSearch = false
     
-    // Landing destination: Today's snapshot (MVP-v1). Hidden once user backs out.
+    // Landing destination: Today's snapshot. Hidden once user backs out.
     @State private var showTodaysSnapshot = true
+    @AppStorage("snapshotDemoMode") private var currentDemoMode: String = SnapshotDemoMode.mvpV1.rawValue
     
     var body: some View {
         Group {
             if showTodaysSnapshot {
                 NavigationStack {
-                    TodaysSnapshotLandingMVPv1(onBack: {
-                        selection = .notifications
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            showTodaysSnapshot = false
-                        }
-                    })
+                    snapshotLandingView
                 }
                 .transition(.opacity)
             } else {
@@ -111,6 +107,23 @@ struct ContentView: View {
         }
     }
     
+    // MARK: - Snapshot Landing (mode-aware)
+
+    @ViewBuilder
+    private var snapshotLandingView: some View {
+        let backAction: () -> Void = {
+            selection = .notifications
+            withAnimation(.easeInOut(duration: 0.3)) {
+                showTodaysSnapshot = false
+            }
+        }
+        if currentDemoMode == SnapshotDemoMode.v5.rawValue {
+            TodaysSnapshotLandingV5(onBack: backAction)
+        } else {
+            TodaysSnapshotLandingMVPv1(onBack: backAction)
+        }
+    }
+
     // MARK: - Tab Experience
     
     private var tabExperience: some View {

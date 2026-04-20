@@ -11,6 +11,7 @@ enum SnapshotDemoMode: String, CaseIterable, Identifiable {
     case v2MediaCard = "v2-MediaCard"
     case v3HighlightsMediaPreview = "v3-Highlights (Media preview)"
     case v4HighlightsFeedView = "v4-Highlights (Feed view)"
+    case v5 = "v5"
     
     var id: String { rawValue }
     
@@ -21,6 +22,7 @@ enum SnapshotDemoMode: String, CaseIterable, Identifiable {
         case .v2MediaCard: return "Media card feed"
         case .v3HighlightsMediaPreview: return "Highlights + media preview"
         case .v4HighlightsFeedView: return "Highlights + feed view"
+        case .v5: return "Work in progress"
         }
     }
     
@@ -31,6 +33,7 @@ enum SnapshotDemoMode: String, CaseIterable, Identifiable {
         case .v2MediaCard: return "news-feed-home-filled"
         case .v3HighlightsMediaPreview: return "news-feed-home-filled"
         case .v4HighlightsFeedView: return "news-feed-home-filled"
+        case .v5: return "news-feed-home-filled"
         }
     }
 }

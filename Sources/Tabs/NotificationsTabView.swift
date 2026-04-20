@@ -7,6 +7,7 @@ struct NotificationsTab: View {
     @State private var showSearch = false
     @State private var showSnapshot = false
     @State private var notifications: [NotificationItemData] = generateSampleNotifications()
+    @AppStorage("snapshotDemoMode") private var currentDemoMode: String = SnapshotDemoMode.mvpV1.rawValue
     @EnvironmentObject private var drawerState: DrawerStateManager
 
     var body: some View {
@@ -80,9 +81,11 @@ struct NotificationsTab: View {
             }
             .background(Color("surfaceBackground"))
             .navigationDestination(isPresented: $showSnapshot) {
-                TodaysSnapshotLandingMVPv1(onBack: {
-                    showSnapshot = false
-                })
+                if currentDemoMode == SnapshotDemoMode.v5.rawValue {
+                    TodaysSnapshotLandingV5(onBack: { showSnapshot = false })
+                } else {
+                    TodaysSnapshotLandingMVPv1(onBack: { showSnapshot = false })
+                }
             }
         }
     }
