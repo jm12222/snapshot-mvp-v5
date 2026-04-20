@@ -56,7 +56,7 @@ struct TodaysSnapshotLandingV6: View {
 
     private var v6Units: [V6SnapshotUnit] {
         [
-            V6SnapshotUnit(id: 0, title: "Snow finally comes to Colorado",                              body: "There's snow coming to Colorado! Here's a rundown of which ski resorts you should hit this weekend. Best prices and smallest crowds.",                                                 image1: "snow-colorado",     image2: "unsplash-skier-blue", image3: "unsplash-skier-jump", image4: "unsplash-snow-lake", usernames: ["Colorado Ski Authority", "Mountain Report", "Powder Alert", "Resort Guide"]),
+            V6SnapshotUnit(id: 0, title: "Pantone announces 2026 Color of the Year",                  body: "Pantone named Cloud Dancer its 2026 Color of the Year, a warm off-white that signals a collective desire for calm, simplicity, and a softer visual language across design, fashion, and interiors.",                       image1: "pantone-cloud-dancer-hero", image2: "pantone_new_2", image3: "pantone-2",       image4: "pantone-3",          usernames: ["Design Weekly", "Color Trends", "Studio Palette", "Creative Space"]),
             V6SnapshotUnit(id: 1, title: "Nothing Technologies unveils new headphones", body: "New earphone and camera are launched by Nothing Technologies that you are interested in.",                                                                                    image1: "headphones",        image2: "nothing-headphones", image3: "headphones",         image4: "nothing-headphones", usernames: ["The Verge", "Tech Insider", "Wired", "Engadget"]),
             V6SnapshotUnit(id: 2, title: "Brooklyn's liminal night photography spots this April",       body: "Brooklyn is known for its vibrant nightlife and unique photo opportunities. The best options are always hidden.",                                                                   image1: "brooklyn-photo",    image2: "la-cinema",          image3: "brooklyn-photo",    image4: "la-cinema",          usernames: ["Brooklyn Magazine", "NYC Photo", "Street Lens", "Urban Frame"]),
             V6SnapshotUnit(id: 3, title: "Upcoming birthdays",                                          body: "Frederic, Anna and Shelly have birthdays this week. Sabrina announced her graduation.",                                                                                                                    image1: "birthday",          image2: "children-museum-winter", image3: "pantone-color-year", image4: "birthday",         usernames: ["Frederic", "Anna", "Shelly", "Friends"]),
@@ -476,13 +476,16 @@ struct TodaysSnapshotLandingV6: View {
     // MARK: - Hero Media Card
 
     private var heroMediaCard: some View {
-        Button(action: {
-            selectedUnit = v6Units[0]
+        // Hero media card is driven by the first unit so the landing
+        // image / title / body always stays in sync with v6Units[0].
+        let unit = v6Units[0]
+        return Button(action: {
+            selectedUnit = unit
         }) {
             mediaCard(
-                imageName: "ski-colorado",
-                title: "Snow finally comes to Colorado",
-                body: "There's snow coming to Colorado! Here's a rundown of which ski resorts you should hit this weekend. Best prices and smallest crowds."
+                imageName: unit.image1,
+                title: unit.title,
+                body: unit.body
             )
         }
         .buttonStyle(FDSPressedState(cornerRadius: 16)) // tuned: 12 → 16
@@ -1754,38 +1757,76 @@ struct SnapshotUnitDetailV6: View {
     // Each bullet is paired with an optional link substring that gets rendered
     // in accentColor body3Link typography to indicate where a tap would jump
     // out to the original source video.
+    // MARK: – Detail entrance timing
+    //
+    // The detail page reads top-to-bottom in beats so the user feels the
+    // AI "thinking through" the summary live. Bullets fade in one at a
+    // time, then the share/sources pills, then each compact media card,
+    // and finally the floating composer docks at the bottom.
+    private let thesisDelay: Double = 0.06
+    private let bulletStagger: Double = 0.20 // 200ms between bullets
+    private let cardStagger: Double = 0.20   // 200ms between compact cards
+    private let postBulletGap: Double = 0.15 // breath before pills
+    private let postPillsGap: Double = 0.15  // breath before grid
+    private let postGridGap: Double = 0.15   // breath before composer
+
+    private func bulletDelay(for index: Int) -> Double {
+        thesisDelay + 0.14 + Double(index) * bulletStagger
+    }
+
+    private var lastBulletDelay: Double {
+        guard !detailBullets.isEmpty else { return thesisDelay }
+        return bulletDelay(for: detailBullets.count - 1)
+    }
+
+    private var pillsDelay: Double { lastBulletDelay + postBulletGap }
+
+    private func cardDelay(for index: Int) -> Double {
+        pillsDelay + postPillsGap + Double(index) * cardStagger
+    }
+
+    private var lastCardDelay: Double { cardDelay(for: 3) }
+
+    private var composerDelay: Double { lastCardDelay + postGridGap }
+
     private var detailBullets: [(body: String, linkText: String?)] {
+        // Cap of 3 inline accent links per sub-page for the demo, all
+        // living in the bullets (thesis stays plain primaryText).
         [
-            (body: "Forecasters are calling for 18 to 24 inches of new snow above 9,000 feet between Friday night and Sunday morning.", linkText: "Forecasters"),
-            (body: "Heaviest accumulation is expected along the I-70 corridor, with several previously-closed lifts reopening in time for the weekend.", linkText: nil),
-            (body: "Mountain towns have issued winter parking advisories; chains may be required on Loveland and Vail Pass after midnight Friday.", linkText: "Loveland and Vail Pass"),
-            // Cap of 3 inline links per sub-page for the demo — this bullet
-            // intentionally has no link to keep the count at 3 (thesis +
-            // bullet 0 + bullet 2).
-            (body: "Lift tickets are tracking 12% cheaper than the same weekend last year, and lodging availability is unusually strong for late-season powder.", linkText: nil)
+            (body: "The warm off-white tone reflects a global desire for calm and simplicity in visual culture.", linkText: "warm off-white tone"),
+            (body: "Fashion houses are already incorporating Cloud Dancer into upcoming spring collections.", linkText: "spring collections"),
+            (body: "Interior designers call it Pantone's softest and most versatile pick in over a decade.", linkText: "Interior designers")
         ]
     }
 
-    // Inline-link helper: returns body3 text with an optional substring styled
-    // as a body3Link in accentColor (single contiguous match).
+    // Inline-link helper: returns text with an optional substring styled
+    // as an accentColor link (single contiguous match). Caller chooses the
+    // body size — thesis sentence uses .body2, sub-bullets use .body3.
+    enum LinkifiedBodySize { case body2, body3 }
+
     @ViewBuilder
-    private func linkifiedBody(_ text: String, linkText: String?) -> some View {
+    private func linkifiedBody(_ text: String, linkText: String?, size: LinkifiedBodySize = .body2) -> some View {
         if let link = linkText, let range = text.range(of: link) {
             let prefix = String(text[..<range.lowerBound])
             let suffix = String(text[range.upperBound...])
-            (Text(prefix)
+            let composed = Text(prefix)
                 .foregroundColor(Color("primaryText"))
              + Text(link)
-                .font(.body3Link)
+                .font(size == .body2 ? .body2Link : .body3Link)
                 .foregroundColor(Color("accentColor"))
              + Text(suffix)
                 .foregroundColor(Color("primaryText"))
-            )
-            .body3Typography()
+            switch size {
+            case .body2: composed.body2Typography()
+            case .body3: composed.body3Typography()
+            }
         } else {
-            Text(text)
-                .body3Typography()
-                .foregroundColor(Color("primaryText"))
+            switch size {
+            case .body2:
+                Text(text).body2Typography().foregroundColor(Color("primaryText"))
+            case .body3:
+                Text(text).body3Typography().foregroundColor(Color("primaryText"))
+            }
         }
     }
 
@@ -1800,7 +1841,7 @@ struct SnapshotUnitDetailV6: View {
                 VStack(alignment: .leading, spacing: 0) {
                     // Title
                     Text(unit.title)
-                        .headline3EmphasizedTypography() // tuned: headline2Emphasized → headline3Emphasized (17pt bold)
+                        .headline2EmphasizedTypography() // tuned: H3Emphasized → H2Emphasized (20pt bold)
                         .foregroundColor(Color("primaryText"))
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, 12)
@@ -1808,30 +1849,40 @@ struct SnapshotUnitDetailV6: View {
                         .padding(.bottom, 16) // tuned: 12 → 16 (+4pt below title)
                         .v6EntranceAnimation(visible: entranceVisible, delay: 0.00)
 
-                    // Thesis + sub-bullets (formatting copied from MVPv1 snapshotUnit:
-                    // single VStack(spacing: 12), .top-aligned HStack(spacing: 8))
+                    // Thesis + sub-bullets. Bullets fade in one at a time
+                    // top→bottom (200ms stagger) so the section reads as the
+                    // AI "thinking through" the summary live.
                     VStack(alignment: .leading, spacing: 12) {
                         // Thesis with one inline accent link pointing to the
                         // original source video (e.g. "ski resorts" snippet).
-                        linkifiedBody(unit.body, linkText: "ski resorts")
+                        // Thesis renders as plain primaryText — the
+                        // inline accent links live in the bullets below.
+                        // +4 above, +8 below (4 baseline + 4 extra
+                        // breathing room before bullets).
+                        linkifiedBody(unit.body, linkText: nil, size: .body3)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.vertical, 4) // +4 above and below the thesis sentence
+                            .padding(.top, 4)
+                            .padding(.bottom, 8)
+                            .v6EntranceAnimation(visible: entranceVisible, delay: thesisDelay)
 
                         VStack(alignment: .leading, spacing: 12) {
-                            ForEach(Array(detailBullets.enumerated()), id: \.offset) { _, bullet in
+                            ForEach(Array(detailBullets.enumerated()), id: \.offset) { index, bullet in
                                 HStack(alignment: .top, spacing: 8) {
                                     Text("•")
                                         .body3Typography()
                                         .foregroundColor(Color("primaryText"))
-                                    linkifiedBody(bullet.body, linkText: bullet.linkText)
+                                    linkifiedBody(bullet.body, linkText: bullet.linkText, size: .body3)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                 }
+                                .v6EntranceAnimation(
+                                    visible: entranceVisible,
+                                    delay: bulletDelay(for: index)
+                                )
                             }
                         }
                     }
                     .padding(.horizontal, 12)
                     .padding(.bottom, 16)
-                    .v6EntranceAnimation(visible: entranceVisible, delay: 0.06)
 
                     // Share + Sources sub-pills (share moved here from header).
                     // 4pt gap between the two pills + a local hairline override
@@ -1863,22 +1914,26 @@ struct SnapshotUnitDetailV6: View {
                     }
                     .padding(.horizontal, 12)
                     .padding(.bottom, 20) // tuned: 24 → 20 (-4pt before media grid)
-                    .v6EntranceAnimation(visible: entranceVisible, delay: 0.12)
+                    .v6EntranceAnimation(visible: entranceVisible, delay: pillsDelay)
 
-                    // 2×2 media grid
+                    // 2×2 media grid — each compact card fades in with a
+                    // 200ms stagger (left→right, top→bottom).
                     VStack(spacing: 8) {
                         HStack(spacing: 8) {
                             detailMediaCard(imageName: unit.image1, username: unit.usernames[0])
+                                .v6EntranceAnimation(visible: entranceVisible, delay: cardDelay(for: 0))
                             detailMediaCard(imageName: unit.image2, username: unit.usernames[1])
+                                .v6EntranceAnimation(visible: entranceVisible, delay: cardDelay(for: 1))
                         }
                         HStack(spacing: 8) {
                             detailMediaCard(imageName: unit.image3, username: unit.usernames[2])
+                                .v6EntranceAnimation(visible: entranceVisible, delay: cardDelay(for: 2))
                             detailMediaCard(imageName: unit.image4, username: unit.usernames[3])
+                                .v6EntranceAnimation(visible: entranceVisible, delay: cardDelay(for: 3))
                         }
                     }
                     .padding(.horizontal, 12)
                     .padding(.bottom, 24)
-                    .v6EntranceAnimation(visible: entranceVisible, delay: 0.18)
                 }
             }
             .background(Color("cardBackground"))
@@ -1886,7 +1941,7 @@ struct SnapshotUnitDetailV6: View {
                 floatingAskComposer
                     // Composer rises in last from a slightly larger travel
                     // distance so it reads as "docking" at the bottom.
-                    .v6EntranceAnimation(visible: entranceVisible, delay: 0.24, travel: 16)
+                    .v6EntranceAnimation(visible: entranceVisible, delay: composerDelay, travel: 16)
             }
         }
         .background(Color("cardBackground"))

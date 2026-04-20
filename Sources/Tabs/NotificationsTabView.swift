@@ -83,6 +83,8 @@ struct NotificationsTab: View {
             .navigationDestination(isPresented: $showSnapshot) {
                 if currentDemoMode == SnapshotDemoMode.v6.rawValue {
                     TodaysSnapshotLandingV6(onBack: { showSnapshot = false })
+                } else if currentDemoMode == SnapshotDemoMode.v6UXR.rawValue {
+                    TodaysSnapshotLandingV6UXR(onBack: { showSnapshot = false })
                 } else if currentDemoMode == SnapshotDemoMode.v5.rawValue {
                     TodaysSnapshotLandingV5(onBack: { showSnapshot = false })
                 } else {
@@ -114,10 +116,15 @@ struct NotificationsTab: View {
                         .headline3Typography()
                         .foregroundStyle(Color("primaryText"))
 
-                    Text("Pantone, Jokic, Children's Museum programs")
-                        .body3Typography()
-                        .foregroundStyle(Color("primaryText"))
-                        .lineLimit(2)
+                    (Text("Snow hits Colorado")
+                        .font(.body3Link)            // body3 at semibold
+                        .foregroundColor(Color("primaryText"))
+                     + Text(", Nothing headphones, upcoming birthdays, Syracuse game...")
+                        .font(.body3)
+                        .foregroundColor(Color("primaryText"))
+                    )
+                    .body3Typography()
+                    .lineLimit(2)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
