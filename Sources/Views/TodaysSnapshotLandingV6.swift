@@ -1754,6 +1754,7 @@ struct SnapshotUnitDetailV6: View {
                             .body3Typography()
                             .foregroundColor(Color("primaryText"))
                             .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.vertical, 4) // +4 above and below the thesis sentence
 
                         VStack(alignment: .leading, spacing: 12) {
                             ForEach(detailBullets, id: \.self) { bullet in
