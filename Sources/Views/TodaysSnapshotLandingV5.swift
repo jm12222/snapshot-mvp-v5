@@ -186,7 +186,7 @@ struct TodaysSnapshotLandingV5: View {
                 VStack(spacing: 0) {
                     // Page 1: Header + Highlights
                     VStack(spacing: 0) {
-                        headerSection
+                        heroMediaCard
                             .id("header")
                             .background(
                                 GeometryReader { geo in
@@ -199,7 +199,9 @@ struct TodaysSnapshotLandingV5: View {
                                         }
                                 }
                             )
-                        
+
+                        headerSection
+
                         if currentOnboardingVariant == SnapshotOnboardingVariant.on.rawValue && showContextualMessage {
                             FDSContextualMessage(
                                 headlineText: "✨ Personalize your daily snapshot",
@@ -519,6 +521,59 @@ struct TodaysSnapshotLandingV5: View {
         .animation(.easeInOut(duration: 0.3), value: showSourcesSheet)
     }
     
+    // MARK: - Hero Media Card
+
+    private var heroMediaCard: some View {
+        mediaCard(
+            imageName: "ski-colorado",
+            title: "⛷️ Ski season in Colorado",
+            body: "Resorts across the state are reporting some of the best conditions in years following a strong December snowpack."
+        )
+        .padding(.horizontal, 12)
+        .padding(.top, 12)
+        .padding(.bottom, 4)
+    }
+
+    private func mediaCard(imageName: String, title: String, body: String) -> some View {
+        ZStack(alignment: .bottomLeading) {
+            GeometryReader { geo in
+                Image(imageName)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: geo.size.width, height: geo.size.height)
+                    .clipped()
+            }
+            .frame(height: 237)
+
+            LinearGradient(
+                stops: [
+                    .init(color: Color.black.opacity(0.0), location: 0.0),
+                    .init(color: Color.black.opacity(0.10), location: 0.35),
+                    .init(color: Color.black.opacity(0.40), location: 0.65),
+                    .init(color: Color.black.opacity(0.55), location: 1.0)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 160)
+            .frame(maxWidth: .infinity, alignment: .bottom)
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text(title)
+                    .headline3EmphasizedTypography()
+                    .foregroundStyle(Color("primaryTextOnMedia"))
+                    .textOnMediaShadow()
+                Text(body)
+                    .body3Typography()
+                    .foregroundStyle(Color("secondaryTextOnMedia"))
+                    .textOnMediaShadow()
+                    .lineLimit(2)
+            }
+            .padding(12)
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+
     // MARK: - Header Section
     
     private var headerSection: some View {
