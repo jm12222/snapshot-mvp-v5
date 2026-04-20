@@ -1857,13 +1857,12 @@ struct WordTruncatedBody: View {
     @State private var availableWidth: CGFloat = 0
 
     private static let measurementFont = UIFont.systemFont(ofSize: 15, weight: .regular)
-    // tuned: 1 → 3 (loosened body3 line-spacing on highlight rows + hero by ~2pt)
-    private static let lineSpacing: CGFloat = 3
+    // Matches the FDS body3 baseline lineSpacing applied via body3Typography()
+    private static let lineSpacing: CGFloat = 1
 
     var body: some View {
         Text(displayText)
             .body3Typography()
-            .lineSpacing(Self.lineSpacing) // overrides the 1pt baseline from body3Typography
             .foregroundColor(foregroundColor)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
