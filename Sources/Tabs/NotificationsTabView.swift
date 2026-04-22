@@ -4,6 +4,7 @@ import SwiftUI
 
 struct NotificationsTab: View {
     var bottomPadding: CGFloat = 0
+    var isSelected: Bool = false
     @State private var showSearch = false
     @State private var showSnapshot = false
     @State private var notifications: [NotificationItemData] = generateSampleNotifications()
@@ -32,7 +33,9 @@ struct NotificationsTab: View {
                         }
                     )
 
-                    todaysSnapshotCell
+                    TodaysSnapshotBanner(isSelected: isSelected) {
+                        showSnapshot = true
+                    }
 
                     let groupedNotifications = groupNotificationsByDate(notifications)
 
@@ -94,67 +97,6 @@ struct NotificationsTab: View {
         }
     }
 
-    // MARK: - Today's Snapshot Cell
-
-    private var todaysSnapshotCell: some View {
-        Button {
-            showSnapshot = true
-        } label: {
-            HStack(alignment: .center, spacing: 12) {
-                Image("todaynotif")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 60, height: 60)
-                    .clipShape(Circle())
-                    .overlay(
-                        Circle()
-                            .strokeBorder(Color("mediaInnerBorder"), lineWidth: 0.5)
-                    )
-
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("Today's snapshot")
-                        .headline3Typography()
-                        .foregroundStyle(Color("primaryText"))
-
-                    (Text("Snow hits Colorado")
-                        .font(.body3Link)            // body3 at semibold
-                        .foregroundColor(Color("primaryText"))
-                     + Text(", Nothing headphones, upcoming birthdays, Syracuse game...")
-                        .font(.body3)
-                        .foregroundColor(Color("primaryText"))
-                    )
-                    .body3Typography()
-                    .lineLimit(2)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-                Image("pantone_new_1")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 56, height: 56)
-                    .cornerRadius(8)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .strokeBorder(Color("mediaInnerBorder"), lineWidth: 0.5)
-                    )
-                    .clipped()
-
-                VStack {
-                    Image("chevron-right-outline")
-                        .resizable()
-                        .renderingMode(.template)
-                        .scaledToFit()
-                        .frame(width: 20, height: 20)
-                        .foregroundStyle(Color("secondaryIcon"))
-                    Spacer()
-                }
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 12)
-        }
-        .buttonStyle(FDSPressedState(cornerRadius: 0))
-        .background(Color("surfaceBackground"))
-    }
 
     private func groupNotificationsByDate(_ notifications: [NotificationItemData]) -> [String: [NotificationItemData]] {
         var grouped: [String: [NotificationItemData]] = [:]
@@ -249,6 +191,150 @@ struct NotificationsTab: View {
         }
 
         return notificationsList.sorted { $0.date > $1.date }
+    }
+}
+
+// MARK: - Today's Snapshot Jewel (Bolt Icon + Banner)
+
+private struct BoltShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        let w = rect.width
+        let h = rect.height
+        var path = Path()
+        path.move(to: CGPoint(x: w * 0.55, y: 0))
+        path.addLine(to: CGPoint(x: w * 0.18, y: h * 0.52))
+        path.addLine(to: CGPoint(x: w * 0.45, y: h * 0.52))
+        path.addLine(to: CGPoint(x: w * 0.38, y: h))
+        path.addLine(to: CGPoint(x: w * 0.82, y: h * 0.40))
+        path.addLine(to: CGPoint(x: w * 0.55, y: h * 0.40))
+        path.closeSubpath()
+        return path
+    }
+}
+
+private struct ShimmerBoltIcon: View {
+    var isSelected: Bool
+    @State private var waveOffset: CGFloat = 30
+    @State private var overlayOpacity: Double = 0
+    @State private var pulseTask: Task<Void, Never>?
+
+    var body: some View {
+        ZStack {
+            Image("bolt-jewel-green")
+                .resizable()
+                .scaledToFill()
+                .frame(width: 60, height: 60)
+                .clipShape(Circle())
+
+            LinearGradient(
+                stops: [
+                    .init(color: .clear, location: 0),
+                    .init(color: .white.opacity(0.15), location: 0.2),
+                    .init(color: .white.opacity(0.6), location: 0.45),
+                    .init(color: .white.opacity(0.6), location: 0.55),
+                    .init(color: .white.opacity(0.15), location: 0.8),
+                    .init(color: .clear, location: 1)
+                ],
+                startPoint: .bottom,
+                endPoint: .top
+            )
+            .frame(width: 20, height: 50)
+            .offset(y: waveOffset)
+            .mask(BoltShape().frame(width: 20, height: 28))
+            .opacity(overlayOpacity)
+        }
+        .onChange(of: isSelected) { _, newValue in
+            pulseTask?.cancel()
+            if newValue {
+                pulseTask = Task { @MainActor in
+                    waveOffset = 30
+                    overlayOpacity = 0
+
+                    try? await Task.sleep(nanoseconds: 350_000_000)
+                    guard !Task.isCancelled else { return }
+
+                    overlayOpacity = 1
+                    withAnimation(.easeInOut(duration: 0.55)) {
+                        waveOffset = -30
+                    }
+
+                    try? await Task.sleep(nanoseconds: 650_000_000)
+                    guard !Task.isCancelled else { return }
+
+                    waveOffset = 30
+                    withAnimation(.easeInOut(duration: 0.55)) {
+                        waveOffset = -30
+                    }
+
+                    try? await Task.sleep(nanoseconds: 600_000_000)
+                    guard !Task.isCancelled else { return }
+
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        overlayOpacity = 0
+                    }
+                }
+            } else {
+                overlayOpacity = 0
+                waveOffset = 30
+            }
+        }
+    }
+}
+
+private struct TodaysSnapshotBanner: View {
+    var isSelected: Bool = false
+    var onTap: (() -> Void)? = nil
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text("Today's snapshot")
+                .headline2EmphasizedTypography()
+                .foregroundStyle(Color("primaryText"))
+                .padding(.horizontal, 12)
+                .padding(.top, 16)
+                .padding(.bottom, 12)
+
+            Button(action: { onTap?() }) {
+                HStack(alignment: .top, spacing: 12) {
+                    ShimmerBoltIcon(isSelected: isSelected)
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        (Text("Snow hits Colorado").fontWeight(.bold)
+                            + Text(", Nothing headphones, Brooklyn photo spots, upcoming birthdays.."))
+                            .headline4Typography()
+                            .foregroundStyle(Color("primaryText"))
+                            .multilineTextAlignment(.leading)
+                            .lineLimit(3)
+
+                        Text("Just now")
+                            .meta4Typography()
+                            .foregroundStyle(Color("secondaryText"))
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                    Image("snow-colorado")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 52, height: 52)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(Color("mediaInnerBorder"), lineWidth: 0.5)
+                        )
+
+                    Image("chevron-right-filled")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 20, height: 20)
+                        .foregroundStyle(Color("secondaryIcon"))
+                }
+                .padding(.horizontal, 12)
+                .padding(.top, 16)
+                .padding(.bottom, 16)
+                .background(Color("accentDeemphasized"))
+            }
+            .buttonStyle(FDSPressedState(cornerRadius: 0))
+        }
     }
 }
 

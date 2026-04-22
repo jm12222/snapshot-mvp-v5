@@ -54,7 +54,7 @@ struct ContentView: View {
     
     // Landing destination: Today's snapshot. Hidden once user backs out.
     @State private var showTodaysSnapshot = true
-    @AppStorage("snapshotDemoMode") private var currentDemoMode: String = SnapshotDemoMode.mvpV1.rawValue
+    @AppStorage("snapshotDemoMode") private var currentDemoMode: String = SnapshotDemoMode.v6.rawValue
     
     var body: some View {
         Group {
@@ -165,7 +165,7 @@ struct ContentView: View {
                         }
                     case .notifications:
                         NavigationStack {
-                            NotificationsTab(bottomPadding: tabHeight)
+                            NotificationsTab(bottomPadding: tabHeight, isSelected: selection == .notifications)
                                 .withNavigationDestinations(bottomPadding: tabHeight)
                         }
                     case .profile:
